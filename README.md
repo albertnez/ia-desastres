@@ -1,4 +1,4 @@
 ia-desastres
 ============
 
-Practica desastres de l'assignatura IA de la FIB
+Primera pràctica de laboratori de l'assignatura d'IA de la FIB. Octubre 2014. 
