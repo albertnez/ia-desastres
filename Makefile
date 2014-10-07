@@ -1,12 +1,11 @@
 JFLAGS = -g
 JC = javac
 CLASSPATH = ./dist/AIMA.jar:./dist/Desastres.jar
-SRCPATH = src/IA/desastres
-BINPATH = ./bin
+SRCPATH = IA/desastres
 
 .SUFFIXES: .java .class
 .java.class:
-		$(JC) $(JFLAGS) $*.java -cp $(CLASSPATH) -d $(BINPATH)
+		$(JC) $(JFLAGS) $*.java -cp $(CLASSPATH)
 
 CLASSES = \
 		$(SRCPATH)/DesastresGoalTest.java \
@@ -17,16 +16,12 @@ CLASSES = \
 
 default: classes
 
-classes: $(BINPATH) $(CLASSES:.java=.class) 
+classes: $(CLASSES:.java=.class) 
 
-$(BINPATH):
-		mkdir $(BINPATH)
-
-run: 
-		cd $(BINPATH)/IA/desastres/
-		java DesastresMain
+run: jar
+		java -jar ia_desastres.jar
 jar:
-		jar cvf ia_desastres.jar $(BINPATH)/IA/desastres/*.class
+		jar cvfe ia_desastres.jar IA.desastres.DesastresMain $(SRCPATH)/*.class
 
 clean:
-		$(RM) -r $(BINPATH) ia_desastres.jar
+		$(RM) $(SRCPATH)/*.class ia_desastres.jar
