@@ -1,4 +1,4 @@
-package desastres;
+package IA.desastres;
 
 public class DesastresState {
 	

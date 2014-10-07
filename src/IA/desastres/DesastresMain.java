@@ -1,4 +1,4 @@
-package deastres;
+package IA.deastres;
 
 import aima.search.framework.Problem;
 import aima.search.framework.Search;
