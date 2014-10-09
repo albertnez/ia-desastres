@@ -23,7 +23,7 @@ run: jar
 		java -jar ia_desastres.jar
 
 jar: classes
-		jar cvfe ia_desastres.jar IA.desastres.DesastresMain $(SRCPATH)/*.class
+		jar cvfm ia_desastres.jar Manifest.txt $(SRCPATH)/*.class
 
 $(DOC):
 		mkdir $(DOC)

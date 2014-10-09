@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: IA.desastres.DesastresMain
+Class-Path: ./dist/AIMA.jar ./dist/Desastres.jar .
+Created-By: 1.7.0_06 (Oracle Corporation)
