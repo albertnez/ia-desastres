@@ -1,7 +1,6 @@
 package IA.desastres;
 import IA.Desastres.*;
 
-
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -71,5 +70,90 @@ public class DesastresState {
       helicopters.get(ind).add(expeditions.get(i));
       ind = (ind + 1)%nhelicopters;
     }
+  }
+
+  /*!\brief Returns the number of centers
+   *
+   */
+  public int getNCenters  (){
+    return ncenters;
+  }
+
+  /*!\brief Returns the number of helicopters
+   *
+   */
+  public int getNHelicopters(){
+    return nhelicopters;
+  }
+
+  /*!\brief Returns the number of helicopters
+   *
+   */
+  public int getNGroups(){
+    return ngroups;
+  }
+
+  /*!\brief Returns the expeditions assigned to
+   * helicopter id.
+   * @param [in] idH ID of the helicopter
+   */
+  public ArrayList<ArrayList<Grupo>> getExpenditions(int idH){
+    return helicopters.get(idH);
+  }
+
+  /*!\brief Returns the expedition in which the group g
+   * is assigned to. If the group g does not have any 
+   * expedition assigned to him, it returns -1;
+   * @param [in] g Grupo
+   */
+  public int getExpendition(Grupo g){
+    for (int i = 0; i < expeditions.size(); ++i){
+      ArrayList<Grupo> ex = expeditions.get(i);
+      int s = ex.size();
+      for (int j = 0; j < s; ++j){
+        if (ex.get(j) == g) return i;
+      }
+    }
+    return -1;
+  }
+
+  /*!\brief Returns the helicopter in which the expedition 
+   * exp is assigned to. If the expedition exp does not
+   * exist, a -1 is returned. 
+   * @param [in] exp ArrayList of the Grupos that form the expedition
+   */
+  public int getHelicopter(ArrayList<Grupo> exp){
+    for (int i = 0; i < helicopters.size(); ++i){
+      if (exp.equals(helicopters.get(i))) return i;
+    }
+    return -1;
+  }
+
+  /*!\brief Returns the groups assigned to
+   * the expedition id.
+   * @param [in] idE ID of the expedition
+   */
+  public ArrayList<Grupo> getGroups(int idE){
+    return expeditions.get(idE);
+  }
+
+  /*!\brief Returns the center in which helicopter
+   * id belongs to
+   * @param [in] idH ID of the helicopter 
+   */
+  public Centro getCenter(int idH){
+    return helicoptersCenter[idH];
+  }
+
+  /*!\brief Returns the helicopters of center c
+   *
+   * @param [in] c Centro   
+   */
+  public ArrayList<Integer> getHelicopters(Centro c){
+    ArrayList<Integer> retVal = new ArrayList<Integer>();
+    for (int i = 0; i < helicoptersCenter.length; ++i){
+      if (helicoptersCenter[i] == c) retVal.add(i);
+    }
+    return retVal;
   }
 }

@@ -7,11 +7,12 @@ import java.util.*;
 
 public class DesastresSuccessorFunction implements SuccessorFunction {
 
-  /*!\brief Generates a list of all the possible successors of aState
-  * 
-  * Returns a List with pairs (string, State) such that State is a 
+  /*!\brief Generates a list with ONE random successesor of aState
+  *
+  * Returns a List with a pair (string, State) such that State is a 
   * successor of aState and string describes the operation applied
-  * to aState in order to obtain that successor.
+  * to aState in order to obtain that successor. One of the many 
+  * successors of aState is chosen.
   *
   * @param [Object] aState State of the problem
   */
@@ -19,16 +20,15 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
     ArrayList retVal = new ArrayList();
     DesastresState state = (DesastresState) aState;
     DesastresHeuristicFunction dhf = new DesastresHeuristicFunction();
+    Random myRandom=new Random();
 
-    //TODO: aqui s'han de posar fors per tal de generar TOTS els successors del estat base
-    // s'ha de canviar la paraula "INTERCAMBIO" segons la paraula utilitzada
+    //TODO: aqui només tindrem que fer que s'esculli una operacio de transformació random i aplicar-la i ja està
     DesastresState newState = new DesastresState(state.getNCenters(), state.getNHelicopters(), state.getNGroups());
     double v = dhf.getHeuristicValue(newState);
     //String S = DesastresState.INTERCAMBIO + " " + i + " " + j + " Coste(" + v + ") ---> " + newState.toString();
     //retVal.add(new Successor(S, newState));
-    //
 
     return retVal;
-  }
+    }
 
 }
