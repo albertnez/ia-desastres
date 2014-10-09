@@ -156,4 +156,23 @@ public class DesastresState {
     }
     return retVal;
   }
+
+  /*!\brief Returns the distance between two groups
+   *
+   * @param [in] g1 Grupo 1   
+   * @param [in] g2 Grupo 2   
+   */
+  public double getDistBetweenGroups (Grupo g1, Grupo g2) {
+    return Math.sqrt( Math.pow(g2.getCoordX()-g1.getCoordX(),2) +  Math.pow(g1.getCoordY()-g2.getCoordY(),2) );
+  }
+
+  /*!\brief Returns the distance between a group
+   * and a center
+   *
+   * @param [in] c Centro   
+   * @param [in] g Grupo    
+   */
+  public double getDistBetweenCenterGroup (Centro c, Grupo g) {
+    return Math.sqrt( Math.pow(g.getCoordX()-c.getCoordX(),2) +  Math.pow(c.getCoordY()-g.getCoordY(),2) );
+  }
 }
