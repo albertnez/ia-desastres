@@ -1,12 +1,13 @@
 package IA.desastres;
 import IA.Desastres.*;
 
+
 import java.util.Random;
 import java.util.ArrayList;
 
 public class DesastresState {
-  private Centros centers;
-  private Grupos groups;
+  private static Centros centers;
+  private static Grupos groups;
 
   // Number of centers 
   private int ncenters;
@@ -15,10 +16,19 @@ public class DesastresState {
   // Number of groups
   private int ngroups;
 
+
+  // Class for expeditions
+  private class Expedition {
+
+
+  }
+
   // Expeditions containing groups
   private ArrayList<ArrayList<Integer>> expeditions;
-  // Helicopters cointaining the expeditions
+  // Helicopters containing the expeditions
   private ArrayList<ArrayList<ArrayList<Integer>>> helicopters;
+
+
 
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
@@ -33,7 +43,7 @@ public class DesastresState {
   public DesastresState(int nc, int nh, int ng) {
     Random myRandom = new Random();
     int seed = myRandom.nextInt();
-    centers = new Centros(nc, nh, seed);
+    //centers = new Centros(nc, nh, seed);
     groups = new Grupos(ng, seed);
 
     ncenters = nc;
@@ -43,15 +53,21 @@ public class DesastresState {
     // Assign each group to one expedition.
     expeditions = new ArrayList<ArrayList<Integer>>(ngroups);
     for (int i = 0; i < ngroups; ++i) {
-      expeditions.get(i).add(i);
+      ArrayList<Integer> a = new ArrayList<Integer>();
+      a.add(i);
+      expeditions.add(a);
     }
 
 
     // Assign each expedition to one helicopter
-    helicopters = new ArrayList<ArrayList<ArrayList<Integer>>>(nhelicopters);
+    helicopters = new ArrayList<ArrayList<ArrayList<Integer>>>();
+    for (int i = 0; i < nhelicopters; ++i) {
+      helicopters.add(i, new ArrayList<ArrayList<Integer>>());
+    }
     int ind = 0;
     for (int i = 0; i < ngroups; ++i) {
-      helicopters.get(i).add(expeditions.get(i));
+      helicopters.get(ind).add(expeditions.get(i));
+      ind = (ind + 1)%nhelicopters;
     }
   }
 
