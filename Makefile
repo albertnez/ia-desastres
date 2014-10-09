@@ -2,6 +2,7 @@ JFLAGS = -g
 JC = javac
 CLASSPATH = ./dist/AIMA.jar:./dist/Desastres.jar
 SRCPATH = IA/desastres
+DOC = ./javadoc
 
 .SUFFIXES: .java .class
 .java.class:
@@ -20,8 +21,15 @@ classes: $(CLASSES:.java=.class)
 
 run: jar
 		java -jar ia_desastres.jar
-jar:
+
+jar: classes
 		jar cvfe ia_desastres.jar IA.desastres.DesastresMain $(SRCPATH)/*.class
 
+$(DOC):
+		mkdir $(DOC)
+
+docs: $(DOC) $(CLASSES)
+		javadoc -version -author -d $(DOC) $(CLASSES) 
+
 clean:
-		$(RM) $(SRCPATH)/*.class ia_desastres.jar
+		$(RM) -r $(SRCPATH)/*.class ia_desastres.jar $(DOC)
