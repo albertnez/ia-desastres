@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class DesastresState {
   private static Centros centers;
   private static Grupos groups;
+  // Array where the i-th Center is the center of the i-th helicopter
+  private static Centro[] helicoptersCenter;
 
   // Number of centers 
   private int ncenters;
@@ -16,19 +18,10 @@ public class DesastresState {
   // Number of groups
   private int ngroups;
 
-
-  // Class for expeditions
-  private class Expedition {
-
-
-  }
-
   // Expeditions containing groups
-  private ArrayList<ArrayList<Integer>> expeditions;
+  private ArrayList<ArrayList<Grupo>> expeditions;
   // Helicopters containing the expeditions
-  private ArrayList<ArrayList<ArrayList<Integer>>> helicopters;
-
-
+  private ArrayList<ArrayList<ArrayList<Grupo>>> helicopters;
 
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
@@ -43,7 +36,7 @@ public class DesastresState {
   public DesastresState(int nc, int nh, int ng) {
     Random myRandom = new Random();
     int seed = myRandom.nextInt();
-    //centers = new Centros(nc, nh, seed);
+    centers = new Centros(nc, nh, seed);
     groups = new Grupos(ng, seed);
 
     ncenters = nc;
@@ -51,24 +44,32 @@ public class DesastresState {
     ngroups = ng;
 
     // Assign each group to one expedition.
-    expeditions = new ArrayList<ArrayList<Integer>>(ngroups);
-    for (int i = 0; i < ngroups; ++i) {
-      ArrayList<Integer> a = new ArrayList<Integer>();
-      a.add(i);
+    expeditions = new ArrayList<ArrayList<Grupo>>(ngroups);
+    for (Grupo g : groups) {
+      ArrayList<Grupo> a = new ArrayList<Grupo>();
+      a.add(g);
       expeditions.add(a);
     }
 
+    // Assign the centers of each helicopter helicoptersCenters
+    helicoptersCenter = new Centro[nh]; 
+    int ind = 0;
+    for (Centro c : centers) {
+      for (int i = 0; i < c.getNHelicopteros(); ++i) {
+        helicoptersCenter[i] = c;
+        ++ind;
+      }
+    }
 
     // Assign each expedition to one helicopter
-    helicopters = new ArrayList<ArrayList<ArrayList<Integer>>>();
-    for (int i = 0; i < nhelicopters; ++i) {
-      helicopters.add(i, new ArrayList<ArrayList<Integer>>());
+    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh);
+    while (helicopters.size() < nh) {
+      helicopters.add(new ArrayList<ArrayList<Grupo>>());
     }
-    int ind = 0;
+    ind = 0;
     for (int i = 0; i < ngroups; ++i) {
       helicopters.get(ind).add(expeditions.get(i));
       ind = (ind + 1)%nhelicopters;
     }
   }
-
 }
