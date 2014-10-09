@@ -8,6 +8,8 @@ import aima.search.informed.SimulatedAnnealingSearch;
 
 public class DesastresMain {
 	public static void main(String[] args){
-        System.out.println("It works!");
-    }
+    System.out.println("It works!");
+    DesastresState d = new DesastresState(10, 10, 10);
+  }
+
 }

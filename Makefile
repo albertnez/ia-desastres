@@ -1,6 +1,6 @@
 JFLAGS = -g
 JC = javac
-CLASSPATH = ./dist/AIMA.jar:./dist/Desastres.jar
+CLASSPATH = ./dist/AIMA.jar:./dist/Desastres.jar:.
 SRCPATH = IA/desastres
 
 .SUFFIXES: .java .class
@@ -21,7 +21,7 @@ classes: $(CLASSES:.java=.class)
 run: jar
 		java -jar ia_desastres.jar
 jar:
-		jar cvfe ia_desastres.jar IA.desastres.DesastresMain $(SRCPATH)/*.class
+		jar cvfm ia_desastres.jar Manifest.txt $(SRCPATH)/*.class
 
 clean:
 		$(RM) $(SRCPATH)/*.class ia_desastres.jar
