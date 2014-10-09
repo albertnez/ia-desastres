@@ -1,6 +1,6 @@
 JFLAGS = -g
 JC = javac
-CLASSPATH = ./dist/AIMA.jar:./dist/Desastres.jar
+CLASSPATH = ./dist/AIMA.jar:./dist/Desastres.jar:.
 SRCPATH = IA/desastres
 DOC = ./javadoc
 
