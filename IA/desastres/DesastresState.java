@@ -11,12 +11,15 @@ public class DesastresState {
   private static Centro[] helicoptersCenter;
 
   // Number of centers 
-  private int ncenters;
+  private static int ncenters;
   // Number of helicopters
-  private int nhelicopters;
+  private static int nhelicopters;
   // Number of groups
-  private int ngroups;
-
+  private static int ngroups;
+  // Speed (on meters per minute) of all helicopters
+  private static double helicopterSpeed;
+  // Maximum people an helicopter can hold at the same time.
+  private static int maximumHelicopterCapacity;
   // Expeditions containing groups
   private ArrayList<ArrayList<Grupo>> expeditions;
   // Helicopters containing the expeditions
@@ -37,7 +40,8 @@ public class DesastresState {
     int seed = myRandom.nextInt();
     centers = new Centros(nc, nh, seed);
     groups = new Grupos(ng, seed);
-
+    helicopterSpeed = 100000.0/60.0;
+    maximumHelicopterCapacity = 15;
     ncenters = nc;
     nhelicopters = nh;
     ngroups = ng;
@@ -97,7 +101,7 @@ public class DesastresState {
    * helicopter id.
    * @param [in] idH ID of the helicopter
    */
-  public ArrayList<ArrayList<Grupo>> getExpenditions(int idH){
+  public ArrayList<ArrayList<Grupo>> getExpeditions(int idH) {
     return helicopters.get(idH);
   }
 
@@ -175,4 +179,61 @@ public class DesastresState {
   public double getDistBetweenCenterGroup (Centro c, Grupo g) {
     return Math.sqrt( Math.pow(g.getCoordX()-c.getCoordX(),2) +  Math.pow(c.getCoordY()-g.getCoordY(),2) );
   }
+  
+  /*!\brief Returns the time (in minutes) that would take to rescue all groups in an expedition
+   *  if they are rescued in the given order and from a given center.
+   *
+   * @param [in] c Centro
+   * @param [in] g Grupo
+   */
+  public double getTripCost(Centro c, ArrayList<Grupo> expedition) {
+    double ret = getDistBetweenCenterGroup(c, expedition.get(0))/helicopterSpeed; //from center to first group
+    ret += (expedition.get(0).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(0).getNPersonas(); //extra time per people
+    for(int i=1; i<expedition.size(); ++i) {
+        ret += getDistBetweenGroups(expedition.get(i-1), expedition.get(i))/helicopterSpeed; //from previous to next group
+        ret += (expedition.get(i).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(i).getNPersonas(); //extra time per people
+    }
+    ret += getDistBetweenCenterGroup(c, expedition.get(expedition.size()-1))/helicopterSpeed;//from last group to center
+    return ret + 10.0; //we must add additional waiting minutes
+  }
+  
+  /*!\brief Rearranges an expedition, minimizing the trip cost it would have if rescued from a given center.
+   *
+   * @param [in] c Centro
+   * @param [in] g Grupo
+   */
+  public void rearrangeExpeditionToOptimumTrip(Centro c, ArrayList<Grupo> expedition) {
+    if(expedition.size()==1) return; // n=1 -> We'll always have the optimum arrangement.
+    double currentCost = getTripCost(c, expedition);
+    if(expedition.size()==2) { //n=2 -> We need to check the original and inverse order
+        ArrayList<Grupo> test = new ArrayList<>();
+        test.add(expedition.get(1));
+        test.add(expedition.get(0));
+        double theOtherCost = getTripCost(c, test);
+        if(theOtherCost<currentCost) expedition = (ArrayList<Grupo>)test.clone();
+    }
+    else if(expedition.size()==3) { //n=3 -> We need to check 3! = 6 possible arrangements
+        for(int i=0; i<expedition.size(); ++i) {
+            for(int j=0; j<expedition.size(); ++j) {
+                if(i!=j)
+                    for(int k=0; k<expedition.size(); ++k) {
+                        if(j!=k && i!=k) {
+                            ArrayList<Grupo> test = new ArrayList<>();
+                            test.add(expedition.get(i));
+                            test.add(expedition.get(j));
+                            test.add(expedition.get(k));
+                            double theOtherCost = getTripCost(c, test);
+                            if(theOtherCost<currentCost) {
+                                currentCost = theOtherCost;
+                                expedition = (ArrayList<Grupo>)test.clone();
+                            }
+                        }
+                    }
+            }
+        }
+    }
+  }
+  
+  
+  
 }
