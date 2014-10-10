@@ -24,7 +24,10 @@ public class DesastresState {
   private ArrayList<ArrayList<Grupo>> expeditions;
   // Helicopters containing the expeditions
   private ArrayList<ArrayList<ArrayList<Grupo>>> helicopters;
-
+  // Cost of the state (initialize it when creating an initial solution).
+  private double solutionCost;
+  
+  
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
    * Creates a new instance of the problem with nc centers, nh helicopters and ng groups
@@ -45,7 +48,7 @@ public class DesastresState {
     ncenters = nc;
     nhelicopters = nh;
     ngroups = ng;
-
+    solutionCost = 0.0; 
     // Assign each group to one expedition.
     expeditions = new ArrayList<ArrayList<Grupo>>(ngroups);
     for (Grupo g : groups) {
@@ -210,7 +213,7 @@ public class DesastresState {
         test.add(expedition.get(1));
         test.add(expedition.get(0));
         double theOtherCost = getTripCost(c, test);
-        if(theOtherCost<currentCost) expedition = (ArrayList<Grupo>)test.clone();
+        if(theOtherCost<currentCost) expedition =  new ArrayList<Grupo>(test);
     }
     else if(expedition.size()==3) { //n=3 -> We need to check 3! = 6 possible arrangements
         for(int i=0; i<expedition.size(); ++i) {
@@ -225,7 +228,7 @@ public class DesastresState {
                             double theOtherCost = getTripCost(c, test);
                             if(theOtherCost<currentCost) {
                                 currentCost = theOtherCost;
-                                expedition = (ArrayList<Grupo>)test.clone();
+                                expedition = new ArrayList<Grupo>(test);
                             }
                         }
                     }
