@@ -154,6 +154,19 @@ public class DesastresState {
     return helicoptersCenter[idH];
   }
 
+  /*\!brief Returns the sum of all trip times.
+   */
+  public double getTypeASolutionCost() {
+    return typeASolutionCost;
+  }
+  
+  /*\!brief Return the sum of trip times of expeditions which have at least
+            one priority 1 group.
+   */
+  public double getTypeBSolutionCost() {
+    return typeBSolutionCost;
+  }
+  
   /*!\brief Returns the helicopters of center c
    *
    * @param [in] c Centro   
@@ -192,14 +205,20 @@ public class DesastresState {
    * @param [in] g Grupo
    */
   public double getTripCost(Centro c, ArrayList<Grupo> expedition) {
-    double ret = getDistBetweenCenterGroup(c, expedition.get(0))/helicopterSpeed; //from center to first group
-    ret += (expedition.get(0).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(0).getNPersonas(); //extra time per people
+    //from center to first group
+    double ret = getDistBetweenCenterGroup(c, expedition.get(0))/helicopterSpeed;
+    //extra time per people
+    ret += (expedition.get(0).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(0).getNPersonas();
     for(int i=1; i<expedition.size(); ++i) {
-        ret += getDistBetweenGroups(expedition.get(i-1), expedition.get(i))/helicopterSpeed; //from previous to next group
-        ret += (expedition.get(i).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(i).getNPersonas(); //extra time per people
+        //from previous to next group
+        ret += getDistBetweenGroups(expedition.get(i-1), expedition.get(i))/helicopterSpeed;
+        //extra time per people
+        ret += (expedition.get(i).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(i).getNPersonas(); 
     }
-    ret += getDistBetweenCenterGroup(c, expedition.get(expedition.size()-1))/helicopterSpeed;//from last group to center
-    return ret + 10.0; //we must add additional waiting minutes
+    //from last group to center
+    ret += getDistBetweenCenterGroup(c, expedition.get(expedition.size()-1))/helicopterSpeed;
+    //we must add additional waiting minutes
+    return ret + 10.0;
   }
   
   /*!\brief Rearranges an expedition, minimizing the trip cost it would have if rescued from a given center.
@@ -261,6 +280,7 @@ public class DesastresState {
         }
     }
     expeditionA.add(a);
+    // Same with B.
     for(int i=0; i<expeditionB.size(); ++i) {
         if(expeditionB.get(i)==b) {
             expeditionB.remove(i);
@@ -268,7 +288,7 @@ public class DesastresState {
         }
     }
     expeditionB.add(b);
-    // Rearrange the expeditions to their optimum costs.
+    // Rearrange the (new) expeditions to their optimum costs.
     rearrangeExpeditionToOptimumTrip(centerA, expeditionA);
     rearrangeExpeditionToOptimumTrip(centerB, expeditionB);
     // Add the new (optimum) trip costs.
