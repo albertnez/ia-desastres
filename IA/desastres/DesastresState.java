@@ -24,9 +24,10 @@ public class DesastresState {
   private ArrayList<ArrayList<Grupo>> expeditions;
   // Helicopters containing the expeditions
   private ArrayList<ArrayList<ArrayList<Grupo>>> helicopters;
-  // Cost of the state (initialize it when creating an initial solution).
-  private double solutionCost;
-  
+  // Sum of all trip times.
+  private double typeASolutionCost;
+  // Sum of trips which have at least one priority 1 group.
+  private double typeBSolutionCost;
   
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
@@ -48,7 +49,8 @@ public class DesastresState {
     ncenters = nc;
     nhelicopters = nh;
     ngroups = ng;
-    solutionCost = 0.0; 
+    typeASolutionCost = 0.0;
+    typeBSolutionCost = 0.0;
     // Assign each group to one expedition.
     expeditions = new ArrayList<ArrayList<Grupo>>(ngroups);
     for (Grupo g : groups) {
@@ -113,7 +115,7 @@ public class DesastresState {
    * expedition assigned to him, it returns -1;
    * @param [in] g Grupo
    */
-  public int getExpendition(Grupo g){
+  public int getExpedition(Grupo g){
     for (int i = 0; i < expeditions.size(); ++i){
       ArrayList<Grupo> ex = expeditions.get(i);
       int s = ex.size();
@@ -236,7 +238,41 @@ public class DesastresState {
         }
     }
   }
-  
-  
+  /*\!brief Swaps two groups between their expeditions and readjusts the solution cost.
+   * @param [in] a Grupo
+     @param [in] b Grupo
+   */
+  public void swapGroupsBetweenExpeditions(Grupo a, Grupo b) {
+    // Get expeditions and centers (needed to compute new trip times).
+    ArrayList<Grupo> expeditionA = expeditions.get(getExpedition(a));
+    int helicopterA = getHelicopter(expeditionA);
+    Centro centerA = getCenter(helicopterA);
+    ArrayList<Grupo> expeditionB = expeditions.get(getExpedition(b));
+    int helicopterB = getHelicopter(expeditionB);
+    Centro centerB = getCenter(helicopterB);
+    // Remove from total cost the old trip costs.
+    typeASolutionCost -= (getTripCost(centerA, expeditionA) + getTripCost(centerB, expeditionB));
+    
+    // Remove groups from their original expeditions, add them to their new.
+    for(int i=0; i<expeditionA.size(); ++i) {
+        if(expeditionA.get(i)==a) { 
+            expeditionA.remove(i);
+            break;
+        }
+    }
+    expeditionA.add(a);
+    for(int i=0; i<expeditionB.size(); ++i) {
+        if(expeditionB.get(i)==b) {
+            expeditionB.remove(i);
+            break;
+        }
+    }
+    expeditionB.add(b);
+    // Rearrange the expeditions to their optimum costs.
+    rearrangeExpeditionToOptimumTrip(centerA, expeditionA);
+    rearrangeExpeditionToOptimumTrip(centerB, expeditionB);
+    // Add the new (optimum) trip costs.
+    typeASolutionCost += getTripCost(centerA, expeditionA) + getTripCost(centerB, expeditionB);
+  }
   
 }
