@@ -58,14 +58,6 @@ public class DesastresState {
       a.add(g);
       expeditions.add(a);
     }
-
-    
-    public DesastresState(DesastresState d) {
-        expeditions = d.getExpeditions();
-        helicopters = d.getHelicopters();
-        typeASolutionCost = d.getTypeASolutionCost();
-        typeBSolutionCost = d.getTypeBSolutionCost();
-    }
     
     // Assign the centers of each helicopter helicoptersCenters
     helicoptersCenter = new Centro[nh]; 
@@ -89,6 +81,14 @@ public class DesastresState {
     }
   }
 
+  public DesastresState(DesastresState d) {
+    expeditions = new ArrayList< ArrayList<Grupo> > (d.getAllExpeditions());
+    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>> (d.getAllHelicopters());
+    typeASolutionCost = d.getTypeASolutionCost();
+    typeBSolutionCost = d.getTypeBSolutionCost();
+  }
+  
+  
   /*!\brief Returns the number of centers
    *
    */
@@ -117,7 +117,14 @@ public class DesastresState {
   public ArrayList<ArrayList<Grupo>> getExpeditions(int idH) {
     return helicopters.get(idH);
   }
-
+  /*!\brief Returns all helicopters
+   *
+   */
+  public ArrayList<ArrayList<ArrayList<Grupo>>> getAllHelicopters() {
+    return helicopters;
+  }
+  
+  
   /*!\brief Returns the expedition in which the group g
    * is assigned to. If the group g does not have any 
    * expedition assigned to him, it returns -1;
@@ -133,7 +140,13 @@ public class DesastresState {
     }
     return -1;
   }
-
+  /*!\brief Returns all expeditions.
+  */
+  public ArrayList< ArrayList<Grupo> > getAllExpeditions() {
+    return expeditions;
+  }
+  
+  
   /*!\brief Returns the helicopter in which the expedition 
    * exp is assigned to. If the expedition exp does not
    * exist, a -1 is returned. 
