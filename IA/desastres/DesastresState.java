@@ -80,7 +80,9 @@ public class DesastresState {
       ind = (ind + 1)%nhelicopters;
     }
   }
-
+  /*!\brief Copy constructor
+   *
+   */
   public DesastresState(DesastresState d) {
     expeditions = new ArrayList< ArrayList<Grupo> > (d.getAllExpeditions());
     helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>> (d.getAllHelicopters());
