@@ -59,6 +59,14 @@ public class DesastresState {
       expeditions.add(a);
     }
 
+    
+    public DesastresState(DesastresState d) {
+        expeditions = d.getExpeditions();
+        helicopters = d.getHelicopters();
+        typeASolutionCost = d.getTypeASolutionCost();
+        typeBSolutionCost = d.getTypeBSolutionCost();
+    }
+    
     // Assign the centers of each helicopter helicoptersCenters
     helicoptersCenter = new Centro[nh]; 
     int ind = 0;
