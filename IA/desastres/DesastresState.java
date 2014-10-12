@@ -77,9 +77,16 @@ public class DesastresState {
     ind = 0;
     for (int i = 0; i < ngroups; ++i) {
       helicopters.get(ind).add(expeditions.get(i));
+      
+      //update cost values
+      double cost = getTripCost(helicoptersCenter[ind], expeditions.get(i));
+      typeASolutionCost += cost;
+      if (expeditions.get(i).get(0).getPrioridad() == 1) typeBSolutionCost += cost;
+
       ind = (ind + 1)%nhelicopters;
     }
   }
+
   /*!\brief Copy constructor
    *
    * @param [in] d DesastresState object we want to copy
@@ -281,7 +288,10 @@ public class DesastresState {
       }
     }
   }
+
   /*\!brief Swaps two groups between their expeditions and readjusts the solution cost.
+            The helicopter that recieves the new group must be able to carry the amount
+            of people of that group.
    * @param [in] a Grupo
      @param [in] b Grupo
    */

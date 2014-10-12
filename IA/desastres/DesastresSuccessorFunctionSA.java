@@ -23,12 +23,12 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
     Random myRandom=new Random();
 
     //TODO: aqui només tindrem que fer que s'esculli una operacio de transformació random i aplicar-la i ja està
-    DesastresState newState = new DesastresState(state.getNCenters(), state.getNHelicopters(), state.getNGroups());
+    DesastresState newState = new DesastresState(state);
     double v = dhf.getHeuristicValue(newState);
     //String S = DesastresState.INTERCAMBIO + " " + i + " " + j + " Coste(" + v + ") ---> " + newState.toString();
     //retVal.add(new Successor(S, newState));
 
     return retVal;
-    }
+  }
 
 }

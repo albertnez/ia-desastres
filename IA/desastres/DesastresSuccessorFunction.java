@@ -22,7 +22,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
 
     //TODO: aqui s'han de posar fors per tal de generar TOTS els successors del estat base
     // s'ha de canviar la paraula "INTERCAMBIO" segons la paraula utilitzada
-    DesastresState newState = new DesastresState(state.getNCenters(), state.getNHelicopters(), state.getNGroups());
+    DesastresState newState = new DesastresState(state);
     double v = dhf.getHeuristicValue(newState);
     //String S = DesastresState.INTERCAMBIO + " " + i + " " + j + " Coste(" + v + ") ---> " + newState.toString();
     //retVal.add(new Successor(S, newState));
