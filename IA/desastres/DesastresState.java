@@ -303,9 +303,23 @@ public class DesastresState {
     ArrayList<Grupo> expeditionB = expeditions.get(getExpedition(b));
     int helicopterB = getHelicopter(expeditionB);
     Centro centerB = getCenter(helicopterB);
+
     // Remove from total cost the old trip costs.
-    typeASolutionCost -= (getTripCost(centerA, expeditionA) + getTripCost(centerB, expeditionB));
-    
+    double tripcostA = getTripCost(centerA, expeditionA);
+    double tripcostB = getTripCost(centerB, expeditionB);
+    typeASolutionCost -= tripcostA+tripcostB;
+    boolean is_urgentA = false, is_urgentB = false;
+
+    for (int i = 0; i < expeditionA.size(); ++i) {
+      if (expeditionA.get(i).getPrioridad() == 1) is_urgentA = true;
+    }
+    if (is_urgentA) typeBSolutionCost -= tripcostA;
+
+    for (int i = 0; i < expeditionB.size(); ++i) {
+      if (expeditionB.get(i).getPrioridad() == 1) is_urgentB = true;
+    }
+    if (is_urgentB) typeBSolutionCost -= tripcostB;
+
     // Remove groups from their original expeditions, add them to their new.
     for(int i=0; i<expeditionA.size(); ++i) {
       if(expeditionA.get(i)==a) { 
@@ -326,7 +340,11 @@ public class DesastresState {
     rearrangeExpeditionToOptimumTrip(centerA, expeditionA);
     rearrangeExpeditionToOptimumTrip(centerB, expeditionB);
     // Add the new (optimum) trip costs.
-    typeASolutionCost += getTripCost(centerA, expeditionA) + getTripCost(centerB, expeditionB);
+    tripcostA = getTripCost(centerA, expeditionA);
+    tripcostB = getTripCost(centerB, expeditionB);
+    typeASolutionCost += tripcostA + tripcostB;
+    if (is_urgentA) typeBSolutionCost += tripcostA;
+    if (is_urgentB) typeBSolutionCost += tripcostB;
   }
   
 }
