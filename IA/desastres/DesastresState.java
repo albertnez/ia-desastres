@@ -82,6 +82,7 @@ public class DesastresState {
   }
   /*!\brief Copy constructor
    *
+   * @param [in] d DesastresState object we want to copy
    */
   public DesastresState(DesastresState d) {
     expeditions = new ArrayList< ArrayList<Grupo> > (d.getAllExpeditions());
@@ -94,7 +95,7 @@ public class DesastresState {
   /*!\brief Returns the number of centers
    *
    */
-  public int getNCenters  (){
+  public int getNCenters(){
     return ncenters;
   }
 
@@ -262,7 +263,7 @@ public class DesastresState {
     else if(expedition.size()==3) { //n=3 -> We need to check 3! = 6 possible arrangements
         for(int i=0; i<expedition.size(); ++i) {
             for(int j=0; j<expedition.size(); ++j) {
-                if(i!=j)
+                if(i!=j) 
                     for(int k=0; k<expedition.size(); ++k) {
                         if(j!=k && i!=k) {
                             ArrayList<Grupo> test = new ArrayList<>();
