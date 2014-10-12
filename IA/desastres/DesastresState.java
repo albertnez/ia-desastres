@@ -234,10 +234,10 @@ public class DesastresState {
     //extra time per people
     ret += (expedition.get(0).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(0).getNPersonas();
     for(int i=1; i<expedition.size(); ++i) {
-        //from previous to next group
-        ret += getDistBetweenGroups(expedition.get(i-1), expedition.get(i))/helicopterSpeed;
-        //extra time per people
-        ret += (expedition.get(i).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(i).getNPersonas(); 
+      //from previous to next group
+      ret += getDistBetweenGroups(expedition.get(i-1), expedition.get(i))/helicopterSpeed;
+      //extra time per people
+      ret += (expedition.get(i).getPrioridad() == 1 ? 2.0 : 1.0) * expedition.get(i).getNPersonas(); 
     }
     //from last group to center
     ret += getDistBetweenCenterGroup(c, expedition.get(expedition.size()-1))/helicopterSpeed;
@@ -254,31 +254,31 @@ public class DesastresState {
     if(expedition.size()==1) return; // n=1 -> We'll always have the optimum arrangement.
     double currentCost = getTripCost(c, expedition);
     if(expedition.size()==2) { //n=2 -> We need to check the original and inverse order
-        ArrayList<Grupo> test = new ArrayList<>();
-        test.add(expedition.get(1));
-        test.add(expedition.get(0));
-        double theOtherCost = getTripCost(c, test);
-        if(theOtherCost<currentCost) expedition =  new ArrayList<Grupo>(test);
+      ArrayList<Grupo> test = new ArrayList<>();
+      test.add(expedition.get(1));
+      test.add(expedition.get(0));
+      double theOtherCost = getTripCost(c, test);
+      if(theOtherCost<currentCost) expedition =  new ArrayList<Grupo>(test);
     }
     else if(expedition.size()==3) { //n=3 -> We need to check 3! = 6 possible arrangements
-        for(int i=0; i<expedition.size(); ++i) {
-            for(int j=0; j<expedition.size(); ++j) {
-                if(i!=j) 
-                    for(int k=0; k<expedition.size(); ++k) {
-                        if(j!=k && i!=k) {
-                            ArrayList<Grupo> test = new ArrayList<>();
-                            test.add(expedition.get(i));
-                            test.add(expedition.get(j));
-                            test.add(expedition.get(k));
-                            double theOtherCost = getTripCost(c, test);
-                            if(theOtherCost<currentCost) {
-                                currentCost = theOtherCost;
-                                expedition = new ArrayList<Grupo>(test);
-                            }
-                        }
-                    }
+      for(int i=0; i<expedition.size(); ++i) {
+        for(int j=0; j<expedition.size(); ++j) {
+          if(i!=j) 
+            for(int k=0; k<expedition.size(); ++k) {
+              if(j!=k && i!=k) {
+                ArrayList<Grupo> test = new ArrayList<>();
+                test.add(expedition.get(i));
+                test.add(expedition.get(j));
+                test.add(expedition.get(k));
+                double theOtherCost = getTripCost(c, test);
+                if(theOtherCost<currentCost) {
+                    currentCost = theOtherCost;
+                    expedition = new ArrayList<Grupo>(test);
+                }
+              }
             }
         }
+      }
     }
   }
   /*\!brief Swaps two groups between their expeditions and readjusts the solution cost.
@@ -298,18 +298,18 @@ public class DesastresState {
     
     // Remove groups from their original expeditions, add them to their new.
     for(int i=0; i<expeditionA.size(); ++i) {
-        if(expeditionA.get(i)==a) { 
-            expeditionA.remove(i);
-            break;
-        }
+      if(expeditionA.get(i)==a) { 
+        expeditionA.remove(i);
+        break;
+      }
     }
     expeditionA.add(a);
     // Same with B.
     for(int i=0; i<expeditionB.size(); ++i) {
-        if(expeditionB.get(i)==b) {
-            expeditionB.remove(i);
-            break;
-        }
+      if(expeditionB.get(i)==b) {
+        expeditionB.remove(i);
+        break;
+      }
     }
     expeditionB.add(b);
     // Rearrange the (new) expeditions to their optimum costs.
