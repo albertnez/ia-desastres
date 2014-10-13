@@ -366,7 +366,7 @@ public class DesastresState {
     typeASolutionCost += dstTripCost;
 
     // If the source expedition is not empty, recalculate
-    if (src.size()) {
+    if (src.size() > 0) {
       rearrangeExpeditionToOptimumTrip(srcCenter, src);
       srcTripCost = getTripCost(srcCenter, src);
       typeASolutionCost += srcTripCost;
@@ -382,8 +382,18 @@ public class DesastresState {
   // TODO change typeBSolutionCost
   public void moveExpeBetweenHeliopters(ArrayList<Grupo> exp, ArrayList<ArrayList<Grupo>> heli) {
     int srcH = getHelicopter(exp);
+    int dstH = helicopters.indexOf(heli);
+    Centro srcCenter = getCenter(srcH);
+    Centro dstCenter = getCenter(dstH);
 
+    typeASolutionCost -= getTripCost(srcCenter, exp);
 
+    heli.add(exp);
+    helicopters.get(srcH).remove(exp);
+
+    rearrangeExpeditionToOptimumTrip(dstCenter, exp);
+
+    typeASolutionCost += getTripCost(dstCenter, exp);
   }
 
   /*\!brief Swaps two expeditions between their helicopters and readjusts the solution cost.
