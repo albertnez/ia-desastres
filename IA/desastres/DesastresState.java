@@ -352,8 +352,8 @@ public class DesastresState {
    *        The helicopter that recieves the new expedition must be able to carry the amount
    *        of people of that group, having present that new places have been freed due to 
    *        the swap of the expeditions.
-   * @param [in] a Grupo
-   * @param [in] b Grupo
+   * @param [in] exp1 Expedition 1
+   * @param [in] exp2 Expedition 2
    */
   public void swapExpeBetweenHelicopters (ArrayList<Grupo> exp1, ArrayList<Grupo> exp2){
     int helicopterA = getHelicopter(exp1);
