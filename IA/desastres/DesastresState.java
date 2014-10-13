@@ -160,6 +160,7 @@ public class DesastresState {
   /*!\brief Returns the helicopter id in which the expedition 
    * exp is assigned to. If the expedition exp does not
    * exist, a -1 is returned. 
+   * exp should NOT be empty. 
    * @param [in] exp ArrayList of the Grupos that form the expedition
    */
   public int getHelicopter(ArrayList<Grupo> exp){
@@ -236,6 +237,7 @@ public class DesastresState {
    * @param [in] g Grupo
    */
   public double getTripCost(Centro c, ArrayList<Grupo> expedition) {
+  	if (expedition.isEmpty()) return 0;
     //from center to first group
     double ret = getDistBetweenCenterGroup(c, expedition.get(0))/helicopterSpeed;
     //extra time per people
@@ -258,7 +260,7 @@ public class DesastresState {
    * @param [in] g Grupo
    */
   public void rearrangeExpeditionToOptimumTrip(Centro c, ArrayList<Grupo> expedition) {
-    if(expedition.size()==1) return; // n=1 -> We'll always have the optimum arrangement.
+    if(expedition.size()==1 || expedition.isEmpty()) return; // n=1 -> We'll always have the optimum arrangement.
     double currentCost = getTripCost(c, expedition);
     if(expedition.size()==2) { //n=2 -> We need to check the original and inverse order
       ArrayList<Grupo> test = new ArrayList<>();
@@ -339,7 +341,7 @@ public class DesastresState {
 
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
    *        solution cost. The expedition that recieves the group should not exceed helicopters
-   *        capacity nor have more than 3 groups
+   *        capacity nor have more than 3 groups. dst CANNOT be empty. 
    * @param [in] g Group being movedExpedition 1
    * @param [in] dst Expedition destiny where g will be moved
    */
@@ -375,7 +377,7 @@ public class DesastresState {
 
   
   /*\!brief Moves a expedition from its helicopter, to the desired helicopter and readjusts the
-   *        solution cost.
+   *        solution cost. exp CANNOT be empty. 
    * @param [in] exp expedition being moved to helicopter heli
    * @param [in] heli helicopter where the expedition exp will be moved
    */
@@ -400,6 +402,7 @@ public class DesastresState {
    *        The helicopter that recieves the new expedition must be able to carry the amount
    *        of people of that group, having present that new places have been freed due to 
    *        the swap of the expeditions.
+   *        Both exp1 and exp2 should NOT be empty.
    * @param [in] exp1 Expedition 1
    * @param [in] exp2 Expedition 2
    */
