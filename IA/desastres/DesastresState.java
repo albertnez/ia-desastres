@@ -295,7 +295,6 @@ public class DesastresState {
    * @param [in] a Grupo
    * @param [in] b Grupo
    */
-// FALTA ACTUALITZAR EL VECTOR HELICOPTERS PQ CONCORDI AMB EXPEDICIONS
   public void swapGroupsBetweenExpeditions(Grupo a, Grupo b) {
     // Get expeditions and centers (needed to compute new trip times).
     ArrayList<Grupo> expeditionA = expeditions.get(getExpedition(a));
@@ -356,7 +355,6 @@ public class DesastresState {
    * @param [in] a Grupo
    * @param [in] b Grupo
    */
-// FALTA ACTUALITZAR EL VECTOR EXPEDICIONS PQ CONCORDI AMB HELICOPTERS
   public void swapExpeBetweenHelicopters (ArrayList<Grupo> exp1, ArrayList<Grupo> exp2){
     int helicopterA = getHelicopter(exp1);
     Centro centerA = getCenter(helicopterA);
