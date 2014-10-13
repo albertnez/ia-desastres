@@ -346,7 +346,49 @@ public class DesastresState {
     if (is_urgentA) typeBSolutionCost += tripcostA;
     if (is_urgentB) typeBSolutionCost += tripcostB;
   }
-  
+
+  /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
+   *        solution cost. The expedition that recieves the group should not exceed helicopters
+   *        capacity nor have more than 3 groups
+   * @param [in] g Group being movedExpedition 1
+   * @param [in] dst Expedition destiny where g will be moved
+   */
+  // TODO change typeBSolutionCost
+  public void moveGroupBetweenExpeditions(Grupo g, ArrayList<Grupo> dst) {
+    ArrayList<Grupo> src = expeditions.get(getExpedition(g));
+    int srcH = getHelicopter(src);
+    int dstH = getHelicopter(dst);
+
+    Centro srcCenter = getCenter(srcH);
+    Centro dstCenter = getCenter(dstH);
+
+    double srcTripCost = getTripCost(srcCenter, src);
+    double dstTripCost = getTripCost(dstCenter, dst);
+
+    typeASolutionCost -= (srcTripCost + dstTripCost);
+
+    dst.add(g);
+    src.remove(g);
+
+    // Recalculate dst expedition cost
+    rearrangeExpeditionToOptimumTrip(dstCenter, dst);
+    dstTripCost = getTripCost(dstCenter, dst);
+    typeASolutionCost += dstTripCost;
+
+    // if the source expedition is now empty, remove it, else, recalculate cost
+    if (src.size() == 0) {
+      int helicopterId = getHelicopter(src);
+      if (helicopterId != -1) {
+        helicopters.get(helicopterId).remove(src);
+      }
+      expeditions.remove(src);
+    }
+    else {
+      rearrangeExpeditionToOptimumTrip(srcCenter, src);
+      srcTripCost = getTripCost(srcCenter, src);
+      typeASolutionCost += srcTripCost;
+    }
+  }
 
   /*\!brief Swaps two expeditions between their helicopters and readjusts the solution cost.
    *        The helicopter that recieves the new expedition must be able to carry the amount
