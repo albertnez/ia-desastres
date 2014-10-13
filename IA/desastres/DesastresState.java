@@ -321,20 +321,10 @@ public class DesastresState {
     if (is_urgentB) typeBSolutionCost -= tripcostB;
 
     // Remove groups from their original expeditions, add them to their new.
-    for(int i=0; i<expeditionA.size(); ++i) {
-      if(expeditionA.get(i)==a) { 
-        expeditionA.remove(i);
-        break;
-      }
-    }
+    expeditionA.remove(a);
     expeditionA.add(b);
     // Same with B.
-    for(int i=0; i<expeditionB.size(); ++i) {
-      if(expeditionB.get(i)==b) {
-        expeditionB.remove(i);
-        break;
-      }
-    }
+    expeditionB.remove(b);
     expeditionB.add(a);
     // Rearrange the (new) expeditions to their optimum costs.
     rearrangeExpeditionToOptimumTrip(centerA, expeditionA);
@@ -390,6 +380,19 @@ public class DesastresState {
     }
   }
 
+  
+  /*\!brief Moves a expedition from its helicopter, to the desired helicopter and readjusts the
+   *        solution cost.
+   * @param [in] exp expedition being moved to helicopter heli
+   * @param [in] heli helicopter where the expedition exp will be moved
+   */
+  // TODO change typeBSolutionCost
+  public void moveExpeBetweenHeliopters(ArrayList<Grupo> exp, ArrayList<ArrayList<Grupo>> heli) {
+    int srcH = getHelicopter(exp);
+
+
+  }
+
   /*\!brief Swaps two expeditions between their helicopters and readjusts the solution cost.
    *        The helicopter that recieves the new expedition must be able to carry the amount
    *        of people of that group, having present that new places have been freed due to 
@@ -427,20 +430,10 @@ public class DesastresState {
     rearrangeExpeditionToOptimumTrip(centerA, newexp2);
     rearrangeExpeditionToOptimumTrip(centerB, newexp1);
 
-    for(int i=0; i<helicopters.get(helicopterA).size(); ++i) {
-      if(helicopters.get(helicopterA).get(i).equals(exp1)) { 
-        helicopters.get(helicopterA).remove(i);
-        break;
-      }
-    }
+    helicopters.get(helicopterA).remove(exp1);
     helicopters.get(helicopterA).add(newexp2);
 
-    for(int i=0; i<helicopters.get(helicopterB).size(); ++i) {
-      if(helicopters.get(helicopterB).get(i).equals(exp2)) { 
-        helicopters.get(helicopterA).remove(i);
-        break;
-      }
-    }
+    helicopters.get(helicopterB).remove(exp2);
     helicopters.get(helicopterB).add(newexp1);
 
     tripcostA = getTripCost(centerA, newexp2);
