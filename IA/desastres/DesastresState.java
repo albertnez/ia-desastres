@@ -365,15 +365,8 @@ public class DesastresState {
     dstTripCost = getTripCost(dstCenter, dst);
     typeASolutionCost += dstTripCost;
 
-    // if the source expedition is now empty, remove it, else, recalculate cost
-    if (src.size() == 0) {
-      int helicopterId = getHelicopter(src);
-      if (helicopterId != -1) {
-        helicopters.get(helicopterId).remove(src);
-      }
-      expeditions.remove(src);
-    }
-    else {
+    // If the source expedition is not empty, recalculate
+    if (src.size()) {
       rearrangeExpeditionToOptimumTrip(srcCenter, src);
       srcTripCost = getTripCost(srcCenter, src);
       typeASolutionCost += srcTripCost;
