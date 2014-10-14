@@ -122,7 +122,7 @@ public class DesastresState {
           ++rInd;
         }
       }
-      // As trip cost already included waitim time, we must substract 10 for the last priority 1 trip
+      // As trip cost already included waiting time, we must substract 10 for the last priority 1 trip
       cost -= 10.0;
       // Update global typeBSolution cost
       typeBCostHelicopters[hInd] = cost;
@@ -345,6 +345,7 @@ public class DesastresState {
    * @param [in] a Grupo
    * @param [in] b Grupo
    */
+  //TODO typeBCost
   public void swapGroupsBetweenExpeditions(Grupo a, Grupo b) {
     // Get expeditions and centers (needed to compute new trip times).
     ArrayList<Grupo> expeditionA = expeditions.get(getExpedition(a));
@@ -389,7 +390,8 @@ public class DesastresState {
 
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
    *        solution cost. The expedition that recieves the group should not exceed helicopters
-   *        capacity nor have 3 or more groups and should exist.
+   *        capacity nor have 3 or more groups and should exist. The expedition dst must NOT be
+   *        empty.
    * @param [in] g Group being moved
    * @param [in] dst Expedition destiny where g will be moved
    */
@@ -422,18 +424,18 @@ public class DesastresState {
       typeASolutionCost += srcTripCost;
     }
     else {
-      expeditions.remove(src);
       helicopters.get(srcH).remove(src);
+      expeditions.remove(src);
     }
   }
 
   /*\!brief Creates a expedition to be performed by the helicopter
    * heli with the group g and eliminates the group g from its former
-   * expedition. 
+   * expedition. The helicopter heli must have all it's others
+   * expeditions full or have no expeditions at all.  
    * @param [in] g initial Grupo of the expedition
    * @param [in] heli Helicopter that performs the new expedition
    */
-  // TODO change typeBSolutionCost
   public void moveGroupToNonExistentExpedition (Grupo g, int heli){
     ArrayList<Grupo> oldexp = expeditions.get(getExpedition(g));
     ArrayList<Grupo> newexp = new ArrayList<Grupo>();
@@ -446,6 +448,10 @@ public class DesastresState {
 
     typeASolutionCost -= srcTripCost;
 
+    //if oldexp has a group of high priority, substract its cost to the typeB array
+    if (expIsHighPriority(oldexp)) 
+      typeBCostHelicopters[srcH] -= srcTripCost;
+
     oldexp.remove(g);
     newexp.add(g);
     helicopters.get(heli).add(newexp);
@@ -455,16 +461,26 @@ public class DesastresState {
     double dstTripCost = getTripCost(dstCenter, newexp);
     typeASolutionCost += dstTripCost;
 
+    //If group g was priority 1 add it to the cost of heli
+    if (g.getPrioridad() == 1) 
+      typeBCostHelicopters[heli] += dstTripCost;
+
     // If the source expedition is not empty, recalculate
     if (oldexp.size() > 0) {
       rearrangeExpeditionToOptimumTrip(srcCenter, oldexp);
       srcTripCost = getTripCost(srcCenter, oldexp);
       typeASolutionCost += srcTripCost;
+      //if oldexp still has a group with priority 1, then add its cost to the array
+      if (expIsHighPriority(oldexp)) 
+        typeBCostHelicopters[srcH] += srcTripCost;
     }
     else {
-      expeditions.remove(oldexp);
       helicopters.get(srcH).remove(oldexp);
+      expeditions.remove(oldexp); 
     }
+    /*needs to be done at the end since we dont know if we will readd srcTripCost
+     to typeBCostHelicopters[srcH] since we might delete it*/
+    updateTypeBSolutionCost();
   }
 
 }
