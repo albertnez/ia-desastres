@@ -33,7 +33,27 @@ public class DesastresState {
   private double typeASolutionCost;
   // Time when last last priority 1 groups is rescued.
   private double typeBSolutionCost;
-  
+
+  /*!\brief Returns true if the expedition contains a priority 1 group.
+   *
+   * @param [in] exp Expedition
+   */
+  private boolean expIsHighPriority (ArrayList<Grupo> exp) {
+    for (Grupo g : exp) {
+      if (g.getPrioridad() == 1) return true;
+    }
+    return false;
+  }
+
+  /*!\brief Update the typeBSolutionCost from individual typeBCost of each helicopter
+   */
+  private void updateTypeBSolutionCost() {
+    typeBSolutionCost = 0.0;
+    for (int i = 0; i < typeBCostHelicopters.length; ++i) {
+      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[i]);
+    }
+  }
+
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
    * Creates a new instance of the problem with nc centers, nh helicopters and ng groups
@@ -475,16 +495,5 @@ public class DesastresState {
     typeASolutionCost += tripcostA + tripcostB;
     if (is_urgentA) typeBSolutionCost += tripcostA;
     if (is_urgentB) typeBSolutionCost += tripcostB; 
-  }
-
-  /*!\brief Returns true if the expedition contains a priority 1 group.
-   *
-   * @param [in] exp Expedition
-   */
-  public boolean expIsHighPriority (ArrayList<Grupo> exp) {
-    for (Grupo g : exp) {
-      if (g.getPrioridad() == 1) return true;
-    }
-    return false;
   }
 }
