@@ -3,6 +3,8 @@ import IA.Desastres.*;
 
 import java.util.Random;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.lang.Math;
 
 public class DesastresState {
   private static Centros centers;
@@ -22,11 +24,14 @@ public class DesastresState {
   private static int maximumHelicopterCapacity;
   // Expeditions containing groups
   private ArrayList<ArrayList<Grupo>> expeditions;
-  // Helicopters containing the expeditions
+  // Helicopters containing the expeditions. For each helicopters, priority 1 expeditions
+  // will appear before priority 2 expeditions.
   private ArrayList<ArrayList<ArrayList<Grupo>>> helicopters;
+  // Time when last priority 1 groups is rescued in each helicopter
+  private double[] typeBCostHelicopters;
   // Sum of all trip times.
   private double typeASolutionCost;
-  // Sum of trips which have at least one priority 1 group.
+  // Time when last last priority 1 groups is rescued.
   private double typeBSolutionCost;
   
   /*!\brief Generates an instance of Desastres problem with an initial solution
@@ -49,6 +54,7 @@ public class DesastresState {
     ncenters = nc;
     nhelicopters = nh;
     ngroups = ng;
+    typeBCostHelicopters = new double[nhelicopters];
     typeASolutionCost = 0.0;
     typeBSolutionCost = 0.0;
     // Assign each group to one expedition.
@@ -77,13 +83,30 @@ public class DesastresState {
     ind = 0;
     for (int i = 0; i < ngroups; ++i) {
       helicopters.get(ind).add(expeditions.get(i));
-      
       //update cost values
       double cost = getTripCost(helicoptersCenter[ind], expeditions.get(i));
       typeASolutionCost += cost;
-      if (expeditions.get(i).get(0).getPrioridad() == 1) typeBSolutionCost += cost;
-
+      if (expIsHighPriority(expeditions.get(i))) typeBSolutionCost += cost;
       ind = (ind + 1)%nhelicopters;
+    }
+    // Rearrange expeditions in each helicopter, so that priority 1 ones are executed first
+
+    for (int hInd = 0; hInd < nhelicopters; ++hInd) {
+      ArrayList<ArrayList<Grupo>> heli = helicopters.get(hInd);
+      int rInd = 0;
+      double cost = 0.0;
+      for (int i = 0; i < heli.size(); ++i) {
+        if (expIsHighPriority(heli.get(0))) {
+          if (i != rInd) {
+            Collections.swap(heli, rInd, i);
+          }
+          cost += getTripCost(helicoptersCenter[hInd], heli.get(rInd));
+          ++rInd;
+        }
+      }
+      // Update global typeBSolution cost
+      typeBCostHelicopters[hInd] = cost;
+      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, cost);
     }
   }
 
@@ -191,8 +214,7 @@ public class DesastresState {
     return typeASolutionCost;
   }
   
-  /*\!brief Return the sum of trip times of expeditions which have at least
-            one priority 1 group.
+  /*\!brief Return the time when last priority 1 group is rescued.
    */
   public double getTypeBSolutionCost() {
     return typeBSolutionCost;
@@ -444,5 +466,16 @@ public class DesastresState {
     typeASolutionCost += tripcostA + tripcostB;
     if (is_urgentA) typeBSolutionCost += tripcostA;
     if (is_urgentB) typeBSolutionCost += tripcostB; 
+  }
+
+  /*!\brief Returns true if the expedition contains a priority 1 group.
+   *
+   * @param [in] exp Expedition
+   */
+  public boolean expIsHighPriority (ArrayList<Grupo> exp) {
+    for (Grupo g : exp) {
+      if (g.getPrioridad() == 1) return true;
+    }
+    return false;
   }
 }
