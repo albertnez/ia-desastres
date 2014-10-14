@@ -390,7 +390,7 @@ public class DesastresState {
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
    *        solution cost. The expedition that recieves the group should not exceed helicopters
    *        capacity nor have 3 or more groups and should exist.
-   * @param [in] g Group being movedExpedition 1
+   * @param [in] g Group being moved
    * @param [in] dst Expedition destiny where g will be moved
    */
   // TODO change typeBSolutionCost
@@ -420,6 +420,50 @@ public class DesastresState {
       rearrangeExpeditionToOptimumTrip(srcCenter, src);
       srcTripCost = getTripCost(srcCenter, src);
       typeASolutionCost += srcTripCost;
+    }
+    else {
+      expeditions.remove(src);
+      helicopters.get(srcH).remove(src);
+    }
+  }
+
+  /*\!brief Creates a expedition to be performed by the helicopter
+   * heli with the group g and eliminates the group g from its former
+   * expedition. 
+   * @param [in] g initial Grupo of the expedition
+   * @param [in] heli Helicopter that performs the new expedition
+   */
+  // TODO change typeBSolutionCost
+  public void moveGroupToNonExistentExpedition (Grupo g, int heli){
+    ArrayList<Grupo> oldexp = expeditions.get(getExpedition(g));
+    ArrayList<Grupo> newexp = new ArrayList<Grupo>();
+    int srcH = getHelicopter(oldexp);
+
+    Centro srcCenter = getCenter(srcH);
+    Centro dstCenter = getCenter(heli);
+
+    double srcTripCost = getTripCost(srcCenter, oldexp);
+
+    typeASolutionCost -= srcTripCost;
+
+    oldexp.remove(g);
+    newexp.add(g);
+    helicopters.get(heli).add(newexp);
+    expeditions.add(newexp);
+
+    rearrangeExpeditionToOptimumTrip(dstCenter, newexp);
+    double dstTripCost = getTripCost(dstCenter, newexp);
+    typeASolutionCost += dstTripCost;
+
+    // If the source expedition is not empty, recalculate
+    if (oldexp.size() > 0) {
+      rearrangeExpeditionToOptimumTrip(srcCenter, oldexp);
+      srcTripCost = getTripCost(srcCenter, oldexp);
+      typeASolutionCost += srcTripCost;
+    }
+    else {
+      expeditions.remove(oldexp);
+      helicopters.get(srcH).remove(oldexp);
     }
   }
 
