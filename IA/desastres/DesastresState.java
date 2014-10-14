@@ -7,6 +7,11 @@ import java.util.Collections;
 import java.lang.Math;
 
 public class DesastresState {
+  //Strings for printing out the result
+  public static String INTERCAMBIO_GRUPOS = "Intercambio de los grupos";
+  public static String MOVER_GRUPO_A_EXPEDICION = "Movemos un grupo a una expedición";
+  public static String CREAR_EXPEDICION = "Creamos una expedicion y movemos el grupo";
+
   private static Centros centers;
   private static Grupos groups;
   // Array where the i-th Center is the center of the i-th helicopter
@@ -14,8 +19,8 @@ public class DesastresState {
 
   // Number of centers 
   private static int ncenters;
-  // Number of helicopters
-  private static int nhelicopters;
+  // Number of helicopters per center
+  private static int nhelicopterspercenter;
   // Number of groups
   private static int ngroups;
   // Speed (on meters per minute) of all helicopters
@@ -70,9 +75,9 @@ public class DesastresState {
     helicopterSpeed = 100000.0/60.0;
     maximumHelicopterCapacity = 15;
     ncenters = nc;
-    nhelicopters = nh;
+    nhelicopterspercenter = nh;
     ngroups = ng;
-    typeBCostHelicopters = new double[nhelicopters];
+    typeBCostHelicopters = new double[nhelicopterspercenter * ncenters];
     typeASolutionCost = 0.0;
     typeBSolutionCost = 0.0;
     // Assign each group to one expedition.
@@ -84,7 +89,7 @@ public class DesastresState {
     }
     
     // Assign the centers of each helicopter helicoptersCenters
-    helicoptersCenter = new Centro[nh]; 
+    helicoptersCenter = new Centro[nh*nc]; 
     int ind = 0;
     for (Centro c : centers) {
       for (int i = 0; i < c.getNHelicopteros(); ++i) {
@@ -94,8 +99,8 @@ public class DesastresState {
     }
 
     // Assign each expedition to one helicopter
-    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh);
-    while (helicopters.size() < nh) {
+    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh*nc);
+    while (helicopters.size() < nh*nc) {
       helicopters.add(new ArrayList<ArrayList<Grupo>>());
     }
     ind = 0;
@@ -105,11 +110,11 @@ public class DesastresState {
       double cost = getTripCost(helicoptersCenter[ind], expeditions.get(i));
       typeASolutionCost += cost;
       if (expIsHighPriority(expeditions.get(i))) typeBSolutionCost += cost;
-      ind = (ind + 1)%nhelicopters;
+      ind = (ind + 1)%(nhelicopterspercenter*ncenters);
     }
     // Rearrange expeditions in each helicopter, so that priority 1 ones are executed first
 
-    for (int hInd = 0; hInd < nhelicopters; ++hInd) {
+    for (int hInd = 0; hInd < nhelicopterspercenter*ncenters; ++hInd) {
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(hInd);
       int rInd = 0;
       double cost = 0.0;
@@ -153,8 +158,8 @@ public class DesastresState {
   /*!\brief Returns the number of helicopters
    *
    */
-  public int getNHelicopters(){
-    return nhelicopters;
+  public int getNHelicoptersPerCenter(){
+    return nhelicopterspercenter;
   }
 
   /*!\brief Returns the number of helicopters
