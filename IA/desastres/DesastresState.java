@@ -104,6 +104,8 @@ public class DesastresState {
           ++rInd;
         }
       }
+      // As trip cost already included waitim time, we must substract 10 for the last priority 1 trip
+      cost -= 10.0;
       // Update global typeBSolution cost
       typeBCostHelicopters[hInd] = cost;
       typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, cost);
@@ -117,6 +119,7 @@ public class DesastresState {
   public DesastresState(DesastresState d) {
     expeditions = new ArrayList< ArrayList<Grupo> > (d.getAllExpeditions());
     helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>> (d.getAllHelicopters());
+    typeBCostHelicopters = d.getTypeBCostHelicopters().clone();
     typeASolutionCost = d.getTypeASolutionCost();
     typeBSolutionCost = d.getTypeBSolutionCost();
   }
@@ -206,6 +209,12 @@ public class DesastresState {
    */
   public Centro getCenter(int idH){
     return helicoptersCenter[idH];
+  }
+
+  /*\!brief Returns array containing the typeBCost of each helicopters
+   */
+  public double[] getTypeBCostHelicopters() {
+    return typeBCostHelicopters;
   }
 
   /*\!brief Returns the sum of all trip times.
