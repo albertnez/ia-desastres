@@ -426,6 +426,8 @@ public class DesastresState {
     else {
       helicopters.get(srcH).remove(src);
       expeditions.remove(src);
+      /* we dont need to set typeBCostHelicopters[srcH] to any specific number because we know
+      it will be -10.0 when it doesn't have any expedition*/
     }
   }
 
@@ -477,6 +479,8 @@ public class DesastresState {
     else {
       helicopters.get(srcH).remove(oldexp);
       expeditions.remove(oldexp); 
+      /* we dont need to set typeBCostHelicopters[srcH] to any specific number because we know
+      it will be -10.0 when it doesn't have any expedition*/
     }
     /*needs to be done at the end since we dont know if we will readd srcTripCost
      to typeBCostHelicopters[srcH] since we might delete it*/
