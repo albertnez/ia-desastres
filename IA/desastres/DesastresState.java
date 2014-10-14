@@ -9,7 +9,7 @@ import java.lang.Math;
 public class DesastresState {
   //Strings for printing out the result
   public static String INTERCAMBIO_GRUPOS = "Intercambio de los grupos";
-  public static String MOVER_GRUPO_A_EXPEDICION = "Movemos un grupo a una expedición";
+  public static String MOVER_GRUPO_EXPEDICION = "Movemos un grupo a una expedición";
   public static String CREAR_EXPEDICION = "Creamos una expedicion y movemos el grupo";
 
   private static Centros centers;
@@ -490,6 +490,25 @@ public class DesastresState {
     /*needs to be done at the end since we dont know if we will readd srcTripCost
      to typeBCostHelicopters[srcH] since we might delete it*/
     updateTypeBSolutionCost();
+  }
+
+  /*!\brief Returns the state in string form
+   *
+   */
+  public String toString() {
+    String retVal = "";
+    for (int i = 0; i < helicopters.size(); ++i){
+      retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordX() + ":\n";
+      ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
+      for (int j = 0; j < heli.size(); ++j){
+        ArrayList<Grupo> exp = heli.get(j);
+        retVal += "\tExpedición " + expeditions.indexOf(exp) + " recoje a los grupos:\n";
+        for (int k =0; k < exp.size(); ++k){
+          retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
+        }
+      }
+    }
+    return retVal;
   }
 
 }
