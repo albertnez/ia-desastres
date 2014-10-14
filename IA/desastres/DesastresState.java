@@ -64,9 +64,7 @@ public class DesastresState {
    * @param [in] nh Number of helicopters
    * @param [in] ng Number of groups
    */
-  public DesastresState(int nc, int nh, int ng) {
-    Random myRandom = new Random();
-    int seed = myRandom.nextInt();
+  public DesastresState(int nc, int nh, int ng, int seed) {
     centers = new Centros(nc, nh, seed);
     groups = new Grupos(ng, seed);
     helicopterSpeed = 100000.0/60.0;
@@ -181,7 +179,7 @@ public class DesastresState {
   }
   
   
-  /*!\brief Returns the expedition in which the group g
+  /*!\brief Returns the id of the expedition in which the group g
    * is assigned to. If the group g does not have any 
    * expedition assigned to him, it returns -1;
    * @param [in] g Grupo
@@ -196,6 +194,7 @@ public class DesastresState {
     }
     return -1;
   }
+
   /*!\brief Returns all expeditions.
   */
   public ArrayList< ArrayList<Grupo> > getAllExpeditions() {
@@ -390,7 +389,7 @@ public class DesastresState {
 
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
    *        solution cost. The expedition that recieves the group should not exceed helicopters
-   *        capacity nor have more than 3 groups. 
+   *        capacity nor have 3 or more groups and should exist.
    * @param [in] g Group being movedExpedition 1
    * @param [in] dst Expedition destiny where g will be moved
    */
@@ -424,76 +423,4 @@ public class DesastresState {
     }
   }
 
-  
-  /*\!brief Moves a expedition from its helicopter, to the desired helicopter and readjusts the
-   *        solution cost.
-   * @param [in] exp expedition being moved to helicopter heli
-   * @param [in] heli helicopter where the expedition exp will be moved
-   */
-  // TODO change typeBSolutionCost
-  public void moveExpeBetweenHeliopters(ArrayList<Grupo> exp, ArrayList<ArrayList<Grupo>> heli) {
-    int srcH = getHelicopter(exp);
-    int dstH = helicopters.indexOf(heli);
-    Centro srcCenter = getCenter(srcH);
-    Centro dstCenter = getCenter(dstH);
-
-    typeASolutionCost -= getTripCost(srcCenter, exp);
-
-    heli.add(exp);
-    helicopters.get(srcH).remove(exp);
-
-    rearrangeExpeditionToOptimumTrip(dstCenter, exp);
-
-    typeASolutionCost += getTripCost(dstCenter, exp);
-  }
-
-  /*\!brief Swaps two expeditions between their helicopters and readjusts the solution cost.
-   *        The helicopter that recieves the new expedition must be able to carry the amount
-   *        of people of that group, having present that new places have been freed due to 
-   *        the swap of the expeditions.
-   * @param [in] exp1 Expedition 1
-   * @param [in] exp2 Expedition 2
-   */
-  public void swapExpeBetweenHelicopters (ArrayList<Grupo> exp1, ArrayList<Grupo> exp2){
-    int helicopterA = getHelicopter(exp1);
-    Centro centerA = getCenter(helicopterA);
-    int helicopterB = getHelicopter(exp2);
-    Centro centerB = getCenter(helicopterB);
-
-    double tripcostA = getTripCost(centerA, exp1);
-    double tripcostB = getTripCost(centerB, exp2);
-    typeASolutionCost -= tripcostA+tripcostB;
-    boolean is_urgentA = false, is_urgentB = false;
-
-    for (int i = 0; i < exp1.size(); ++i) {
-      if (exp1.get(i).getPrioridad() == 1) is_urgentA = true;
-    }
-    if (is_urgentA) typeBSolutionCost -= tripcostA;
-
-    for (int i = 0; i < exp2.size(); ++i) {
-      if (exp2.get(i).getPrioridad() == 1) is_urgentB = true;
-    }
-    if (is_urgentB) typeBSolutionCost -= tripcostB;
-
-    ArrayList<Grupo> newexp1 = new ArrayList<Grupo> (exp1.size());
-    for(Grupo item: exp1) newexp1.add(item); 
-    //tenir present que item NO es una copia de cada grup, sino una referencia al mateix objecte
-    ArrayList<Grupo> newexp2 = new ArrayList<Grupo> (exp2.size());
-    for(Grupo item: exp2) newexp2.add(item);
-
-    rearrangeExpeditionToOptimumTrip(centerA, newexp2);
-    rearrangeExpeditionToOptimumTrip(centerB, newexp1);
-
-    helicopters.get(helicopterA).remove(exp1);
-    helicopters.get(helicopterA).add(newexp2);
-
-    helicopters.get(helicopterB).remove(exp2);
-    helicopters.get(helicopterB).add(newexp1);
-
-    tripcostA = getTripCost(centerA, newexp2);
-    tripcostB = getTripCost(centerB, newexp1);
-    typeASolutionCost += tripcostA + tripcostB;
-    if (is_urgentA) typeBSolutionCost += tripcostA;
-    if (is_urgentB) typeBSolutionCost += tripcostB; 
-  }
 }
