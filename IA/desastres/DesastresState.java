@@ -68,8 +68,7 @@ public class DesastresState {
    * @param [in] heli Helicopter that contains that expedition
    */
   private void rearrangeExpeditionByPriority(ArrayList<Grupo> exp, ArrayList<ArrayList<Grupo>> heli) {
-    int ind = 0;
-    while (heli.get(ind) != exp) ++ind;
+    int ind = heli.indexOf(exp);
     if (expIsHighPriority(exp)) {
       // If it has high priority, it should be moved to the left until finds another priority 1 expedition
       while (ind-1 >= 0 && !expIsHighPriority(heli.get(ind-1))) {
