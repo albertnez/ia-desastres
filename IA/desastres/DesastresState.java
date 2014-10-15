@@ -455,7 +455,6 @@ public class DesastresState {
    * @param [in] g Group being moved
    * @param [in] dst Expedition destiny where g will be moved
    */
-  // TODO change typeBSolutionCost
   public void moveGroupBetweenExpeditions(Grupo g, ArrayList<Grupo> dst) {
     ArrayList<Grupo> src = expeditions.get(getExpedition(g));
     int srcH = getHelicopter(src);
@@ -469,25 +468,53 @@ public class DesastresState {
 
     typeASolutionCost -= (srcTripCost + dstTripCost);
 
+    boolean oldSrcPriority = expIsHighPriority(src);
+    boolean oldDstPriority = expIsHighPriority(dst);
+    // As typeBcost of source is the only one that can decrease, we may update it only if it equals
+    // the typeBSolutionCost now, and then src and dst cost is less.
+    boolean updateTypeB = (typeBCostHelicopters[srcH] == typeBSolutionCost);
+
+    if (oldSrcPriority) typeBCostHelicopters[srcH] -= srcTripCost;
+    if (oldDstPriority) typeBCostHelicopters[dstH] -= dstTripCost;
+
     dst.add(g);
     src.remove(g);
+
+    boolean nowSrcPriority = expIsHighPriority(src);
+    boolean nowDstPriority = expIsHighPriority(dst);
 
     // Recalculate dst expedition cost
     rearrangeExpeditionToOptimumTrip(dstCenter, dst);
     dstTripCost = getTripCost(dstCenter, dst);
     typeASolutionCost += dstTripCost;
 
+    if (nowDstPriority) typeBCostHelicopters[dstH] += dstTripCost;
+    if (typeBCostHelicopters[dstH] >= typeBSolutionCost) {
+      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[dstH]); 
+      updateTypeB = false;
+    }
+
     // If the source expedition is not empty, recalculate
     if (src.size() > 0) {
       rearrangeExpeditionToOptimumTrip(srcCenter, src);
       srcTripCost = getTripCost(srcCenter, src);
       typeASolutionCost += srcTripCost;
+
+      if (nowSrcPriority) typeBCostHelicopters[srcH] += srcTripCost;
+      if (typeBCostHelicopters[srcH] >= typeBSolutionCost) {
+        typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[srcH]);
+        updateTypeB = false;
+      }
     }
     else {
       helicopters.get(srcH).remove(src);
       expeditions.remove(src);
       /* we dont need to set typeBCostHelicopters[srcH] to any specific number because we know
       it will be -10.0 when it doesn't have any expedition*/
+    }
+
+    if (updateTypeB) {
+      updateTypeBSolutionCost();
     }
   }
 
