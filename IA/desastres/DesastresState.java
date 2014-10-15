@@ -127,9 +127,8 @@ public class DesastresState {
           ++rInd;
         }
       }
-      // As trip cost already included waiting time, we must substract 10 for the last priority 1 trip
-      cost -= 10.0;
-      // Update global typeBSolution cost
+      // Update global typeBSolution cost. typeBSolution will always have a +10 in time
+      // that should be substracted when retrieving its value
       typeBCostHelicopters[hInd] = cost;
       typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, cost);
     }
@@ -366,15 +365,12 @@ public class DesastresState {
     typeASolutionCost -= tripcostA+tripcostB;
     boolean is_urgentA = false, is_urgentB = false;
 
-    for (int i = 0; i < expeditionA.size(); ++i) {
-      if (expeditionA.get(i).getPrioridad() == 1) is_urgentA = true;
-    }
-    if (is_urgentA) typeBSolutionCost -= tripcostA;
+    // Substract typeBCost as they have to be recalculated
+    if (expIsHighPriority(expeditionA)) is_urgentA = true;
+    if (is_urgentA) typeBCostHelicopters[helicopterA] -= tripcostA;
 
-    for (int i = 0; i < expeditionB.size(); ++i) {
-      if (expeditionB.get(i).getPrioridad() == 1) is_urgentB = true;
-    }
-    if (is_urgentB) typeBSolutionCost -= tripcostB;
+    if (expIsHighPriority(expeditionB)) is_urgentB = true;
+    if (is_urgentB) typeBCostHelicopters[helicopterB] -= tripcostB;
 
     // Remove groups from their original expeditions, add them to their new.
     expeditionA.remove(a);
@@ -389,8 +385,25 @@ public class DesastresState {
     tripcostA = getTripCost(centerA, expeditionA);
     tripcostB = getTripCost(centerB, expeditionB);
     typeASolutionCost += tripcostA + tripcostB;
-    if (is_urgentA) typeBSolutionCost += tripcostA;
-    if (is_urgentB) typeBSolutionCost += tripcostB;
+    
+    boolean newIsUrgentA = false, newIsUrgentB = false;
+    if (expIsHighPriority(expeditionA)) newIsUrgentA = true;
+    if (expIsHighPriority(expeditionB)) newIsUrgentB = true;
+    
+    // check if there is a change in urgent
+    if (is_urgentA != newIsUrgentA) {
+      // rearrange expedition
+
+    }
+    // Same for b
+    if (is_urgentB != newIsUrgentB) {
+      // rearrange expedition
+
+    }
+
+    // Now update type B costs if required
+    if (newIsUrgentA) typeBCostHelicopters[helicopterA] += tripcostA;
+    if (newIsUrgentB) typeBCostHelicopters[helicopterB] += tripcostB;
   }
 
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
