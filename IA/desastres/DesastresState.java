@@ -59,6 +59,33 @@ public class DesastresState {
     }
   }
 
+  /*!\brief Rearranges an expedition from an helicopter so that priority order is consistent
+   *
+   * As expeditions with priority 1 should be done before priority 2 expeditions, exp must be
+   * rearranged so that this order is consistent
+   * 
+   * @param [in] exp Expedition that may need to be moved
+   * @param [in] heli Helicopter that contains that expedition
+   */
+  private void rearrangeExpeditionByPriority(ArrayList<Grupo> exp, ArrayList<ArrayList<Grupo>> heli) {
+    int ind = 0;
+    while (heli.get(ind) != exp) ++ind;
+    if (expIsHighPriority(exp)) {
+      // If it has high priority, it should be moved to the left until finds another priority 1 expedition
+      while (ind-1 >= 0 && !expIsHighPriority(heli.get(ind-1))) {
+        Collections.swap(heli, ind-1, ind);
+        --ind;
+      }
+    }
+    else {
+      // Else, move to the right until end or finds another priority 2 expedition
+      while (ind+1 < heli.size() && expIsHighPriority(heli.get(ind))) {
+        Collections.swap(heli, ind, ind+1);
+        ++ind;
+      }
+    }
+  }
+
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
    * Creates a new instance of the problem with nc centers, nh helicopters and ng groups
@@ -349,7 +376,6 @@ public class DesastresState {
    * @param [in] a Grupo
    * @param [in] b Grupo
    */
-  //TODO typeBCost
   public void swapGroupsBetweenExpeditions(Grupo a, Grupo b) {
     // Get expeditions and centers (needed to compute new trip times).
     ArrayList<Grupo> expeditionA = expeditions.get(getExpedition(a));
@@ -364,13 +390,20 @@ public class DesastresState {
     double tripcostB = getTripCost(centerB, expeditionB);
     typeASolutionCost -= tripcostA+tripcostB;
     boolean is_urgentA = false, is_urgentB = false;
+    boolean updateTypeB = false;
 
     // Substract typeBCost as they have to be recalculated
     if (expIsHighPriority(expeditionA)) is_urgentA = true;
-    if (is_urgentA) typeBCostHelicopters[helicopterA] -= tripcostA;
+    if (is_urgentA) {
+      if (typeBCostHelicopters[helicopterA] == typeBSolutionCost) updateTypeB = true;
+      typeBCostHelicopters[helicopterA] -= tripcostA;
+    }
 
     if (expIsHighPriority(expeditionB)) is_urgentB = true;
-    if (is_urgentB) typeBCostHelicopters[helicopterB] -= tripcostB;
+    if (is_urgentB) {
+      if (typeBCostHelicopters[helicopterB] == typeBSolutionCost) updateTypeB = true;
+      typeBCostHelicopters[helicopterB] -= tripcostB;
+    }
 
     // Remove groups from their original expeditions, add them to their new.
     expeditionA.remove(a);
@@ -390,20 +423,29 @@ public class DesastresState {
     if (expIsHighPriority(expeditionA)) newIsUrgentA = true;
     if (expIsHighPriority(expeditionB)) newIsUrgentB = true;
     
-    // check if there is a change in urgent
+    // If there is a change, rearrange
     if (is_urgentA != newIsUrgentA) {
-      // rearrange expedition
-
+      rearrangeExpeditionByPriority(expeditionA, helicopters.get(helicopterA));
     }
     // Same for b
     if (is_urgentB != newIsUrgentB) {
-      // rearrange expedition
-
+      rearrangeExpeditionByPriority(expeditionB, helicopters.get(helicopterB));
     }
 
     // Now update type B costs if required
     if (newIsUrgentA) typeBCostHelicopters[helicopterA] += tripcostA;
     if (newIsUrgentB) typeBCostHelicopters[helicopterB] += tripcostB;
+    // If one of these costs are greater or equal, update
+    if (typeBCostHelicopters[helicopterA] >= typeBSolutionCost || 
+        typeBCostHelicopters[helicopterB] >= typeBSolutionCost) {
+      typeBSolutionCost = java.lang.Math.max(typeBCostHelicopters[helicopterA], 
+                                             typeBCostHelicopters[helicopterB]);
+      updateTypeB = false;
+    }
+    //If typeB needs to be updated, update with other helicopters value
+    if (updateTypeB) {
+      updateTypeBSolutionCost();
+    }
   }
 
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
