@@ -508,8 +508,6 @@ public class DesastresState {
     else {
       helicopters.get(srcH).remove(src);
       expeditions.remove(src);
-      /* we dont need to set typeBCostHelicopters[srcH] to any specific number because we know
-      it will be -10.0 when it doesn't have any expedition*/
     }
 
     if (updateTypeB) {
@@ -536,9 +534,11 @@ public class DesastresState {
 
     typeASolutionCost -= srcTripCost;
 
-    //if oldexp has a group of high priority, substract its cost to the typeB array
-    if (expIsHighPriority(oldexp)) 
-      typeBCostHelicopters[srcH] -= srcTripCost;
+    // As typeBcost of source is the only one that can decrease, we may update it only if it equals
+    // the typeBSolutionCost now, and then src and dst cost is less.
+    boolean updateTypeB = (typeBCostHelicopters[srcH] == typeBSolutionCost);
+
+    if (expIsHighPriority(oldexp)) typeBCostHelicopters[srcH] -= srcTripCost;
 
     oldexp.remove(g);
     newexp.add(g);
@@ -553,6 +553,11 @@ public class DesastresState {
     if (g.getPrioridad() == 1) 
       typeBCostHelicopters[heli] += dstTripCost;
 
+    if (typeBCostHelicopters[heli] >= typeBSolutionCost) {
+      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[heli]); 
+      updateTypeB = false;
+    }
+
     // If the source expedition is not empty, recalculate
     if (oldexp.size() > 0) {
       rearrangeExpeditionToOptimumTrip(srcCenter, oldexp);
@@ -561,16 +566,17 @@ public class DesastresState {
       //if oldexp still has a group with priority 1, then add its cost to the array
       if (expIsHighPriority(oldexp)) 
         typeBCostHelicopters[srcH] += srcTripCost;
+
+      if (typeBCostHelicopters[srcH] >= typeBSolutionCost) {
+        typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[srcH]);
+        updateTypeB = false;
+      }
     }
     else {
       helicopters.get(srcH).remove(oldexp);
       expeditions.remove(oldexp); 
-      /* we dont need to set typeBCostHelicopters[srcH] to any specific number because we know
-      it will be -10.0 when it doesn't have any expedition*/
     }
-    /*needs to be done at the end since we dont know if we will readd srcTripCost
-     to typeBCostHelicopters[srcH] since we might delete it*/
-    updateTypeBSolutionCost();
+    if (updateTypeB) updateTypeBSolutionCost();
   }
 
   /*!\brief Returns the state in string form
