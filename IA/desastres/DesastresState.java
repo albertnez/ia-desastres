@@ -59,32 +59,6 @@ public class DesastresState {
     }
   }
 
-  /*!\brief Rearranges an expedition from an helicopter so that priority order is consistent
-   *
-   * As expeditions with priority 1 should be done before priority 2 expeditions, exp must be
-   * rearranged so that this order is consistent
-   * 
-   * @param [in] exp Expedition that may need to be moved
-   * @param [in] heli Helicopter that contains that expedition
-   */
-  private void rearrangeExpeditionByPriority(ArrayList<Grupo> exp, ArrayList<ArrayList<Grupo>> heli) {
-    int ind = heli.indexOf(exp);
-    if (expIsHighPriority(exp)) {
-      // If it has high priority, it should be moved to the left until finds another priority 1 expedition
-      while (ind-1 >= 0 && !expIsHighPriority(heli.get(ind-1))) {
-        Collections.swap(heli, ind-1, ind);
-        --ind;
-      }
-    }
-    else {
-      // Else, move to the right until end or finds another priority 2 expedition
-      while (ind+1 < heli.size() && expIsHighPriority(heli.get(ind))) {
-        Collections.swap(heli, ind, ind+1);
-        ++ind;
-      }
-    }
-  }
-
   /*!\brief Generates an instance of Desastres problem with an initial solution
    *
    * Creates a new instance of the problem with nc centers, nh helicopters and ng groups
@@ -440,15 +414,6 @@ public class DesastresState {
     if (expIsHighPriority(expeditionA)) newIsUrgentA = true;
     if (expIsHighPriority(expeditionB)) newIsUrgentB = true;
     
-    // If there is a change, rearrange
-    if (is_urgentA != newIsUrgentA) {
-      rearrangeExpeditionByPriority(expeditionA, helicopters.get(helicopterA));
-    }
-    // Same for b
-    if (is_urgentB != newIsUrgentB) {
-      rearrangeExpeditionByPriority(expeditionB, helicopters.get(helicopterB));
-    }
-
     // Now update type B costs if required
     if (newIsUrgentA) typeBCostHelicopters[helicopterA] += tripcostA;
     if (newIsUrgentB) typeBCostHelicopters[helicopterB] += tripcostB;
