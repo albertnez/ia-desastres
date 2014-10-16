@@ -42,6 +42,7 @@ public class DesastresState {
   /*!\brief Returns true if the expedition contains a priority 1 group.
    *
    * @param [in] exp Expedition
+   * @return boolean boolean is true if exp has a group of priority 1
    */
   private boolean expIsHighPriority (ArrayList<Grupo> exp) {
     for (Grupo g : exp) {
@@ -148,13 +149,14 @@ public class DesastresState {
   
   
   /*!\brief Returns the number of centers
-   *
+   * @return int the number of centers of the state
    */
   public int getNCenters(){
     return ncenters;
   }
 
   /*!\brief Returns the number of helicopters
+   * @ return int the number of helicopters per center
    *
    */
   public int getNHelicoptersPerCenter(){
@@ -162,6 +164,7 @@ public class DesastresState {
   }
 
   /*!\brief Returns the number of helicopters
+   * @return int the number of groups of the state  
    *
    */
   public int getNGroups(){
@@ -171,6 +174,8 @@ public class DesastresState {
   /*!\brief Returns the expeditions assigned to
    * helicopter id.
    * @param [in] idH ID of the helicopter
+   * @return ArrayList<ArrayList<Grupo>> array of expeditions performed by
+   * the helicopter idH
    */
   public ArrayList<ArrayList<Grupo>> getExpeditions(int idH) {
     return helicopters.get(idH);
@@ -178,6 +183,8 @@ public class DesastresState {
   
   /*!\brief Returns all helicopters
    *
+   * @return ArrayList<ArrayList<ArrayList<Grupo>>> array that contains all helicopters
+   * and it's expeditions
    */
   public ArrayList<ArrayList<ArrayList<Grupo>>> getAllHelicopters() {
     return helicopters;
@@ -185,6 +192,7 @@ public class DesastresState {
 
  /*!\brief Returns the total number of helicopters
   *
+  * @return int the number of helicopters
   */
   public int getTotalHelicopters(){
     return helicopters.size();
@@ -193,6 +201,8 @@ public class DesastresState {
  /*!\brief Returns the total number of expeditions
   * performed by helicopter idH.
   * @param [in] idH ID of the helicopter
+  * @return int the returns the number of expeditions that the
+  * helicopter idH performs
   */
   public int getNumExpeditionsHeli(int idH){
     return helicopters.get(idH).size();
@@ -203,6 +213,7 @@ public class DesastresState {
    * is assigned to. If the group g does not have any 
    * expedition assigned to him, it returns -1;
    * @param [in] g Grupo
+   * @return int the id of the expediton that contains the group g
    */
   public int getExpedition(Grupo g){
     for (int i = 0; i < expeditions.size(); ++i){
@@ -226,6 +237,8 @@ public class DesastresState {
    * exp is assigned to. If the expedition exp does not
    * exist, a -1 is returned. 
    * @param [in] exp ArrayList of the Grupos that form the expedition
+   * @return int the id of the helicopter that performs the expedition 
+   * exp
    */
   public int getHelicopter(ArrayList<Grupo> exp){
     for (int i = 0; i < helicopters.size(); ++i){
@@ -237,6 +250,8 @@ public class DesastresState {
   /*!\brief Returns the groups assigned to
    * the expedition id.
    * @param [in] idE ID of the expedition
+   * @return ArrayList<Grupo> groups of the expedition with
+   * id idE
    */
   public ArrayList<Grupo> getGroups(int idE){
     return expeditions.get(idE);
@@ -245,18 +260,23 @@ public class DesastresState {
   /*!\brief Returns the center in which helicopter
    * id belongs to
    * @param [in] idH ID of the helicopter 
+   * @return Centro center that has assined the helicopter with
+   * id idH
    */
   public Centro getCenter(int idH){
     return helicoptersCenter[idH];
   }
 
   /*\!brief Returns array containing the typeBCost of each helicopters
+   * @return double[] array of the costs of the total time the 
+   * ith helicopter takes to rescue all the priority 1 groups assigned to it
    */
   public double[] getTypeBCostHelicopters() {
     return typeBCostHelicopters;
   }
 
   /*\!brief Returns the sum of all trip times.
+   * @return double the time it takes to rescue all the groups
    */
   public double getTypeASolutionCost() {
     if (typeASolutionCost > 0) return typeASolutionCost-10;
@@ -264,6 +284,7 @@ public class DesastresState {
   }
   
   /*\!brief Return the time when last priority 1 group is rescued.
+   * @return double the time it takes to rescue all the priority 1 groups
    */
   public double getTypeBSolutionCost() {
     if (typeBSolutionCost > 0) return typeBSolutionCost-10;
@@ -273,6 +294,8 @@ public class DesastresState {
   /*!\brief Returns the helicopters of center c
    *
    * @param [in] c Centro   
+   * @return ArrayList<Integer> array containing the id's of all the helicopters 
+   * assigned to the center c
    */
   public ArrayList<Integer> getHelicopters(Centro c){
     ArrayList<Integer> retVal = new ArrayList<Integer>();
@@ -285,7 +308,8 @@ public class DesastresState {
   /*!\brief Returns the distance between two groups
    *
    * @param [in] g1 Grupo 1   
-   * @param [in] g2 Grupo 2   
+   * @param [in] g2 Grupo 2  
+   * @return double the distance between the two groups
    */
   public double getDistBetweenGroups (Grupo g1, Grupo g2) {
     return Math.sqrt( Math.pow(g2.getCoordX()-g1.getCoordX(),2) +  Math.pow(g1.getCoordY()-g2.getCoordY(),2) );
@@ -296,6 +320,8 @@ public class DesastresState {
    *
    * @param [in] c Centro   
    * @param [in] g Grupo    
+   * @return double the distance between the center c and the 
+   * group g
    */
   public double getDistBetweenCenterGroup (Centro c, Grupo g) {
     return Math.sqrt( Math.pow(g.getCoordX()-c.getCoordX(),2) +  Math.pow(c.getCoordY()-g.getCoordY(),2) );
@@ -306,6 +332,8 @@ public class DesastresState {
    *
    * @param [in] c Centro
    * @param [in] g Grupo
+   * @return double time to performe the rescue of the expedition parting from the 
+   * center c
    */
   public double getTripCost(Centro c, ArrayList<Grupo> expedition) {
     //from center to first group

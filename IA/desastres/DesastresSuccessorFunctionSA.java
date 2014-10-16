@@ -5,7 +5,7 @@ import aima.search.framework.SuccessorFunction;
 
 import java.util.*;
 
-public class DesastresSuccessorFunction implements SuccessorFunction {
+public class DesastresSuccessorFunctionSA implements SuccessorFunction {
 
   /*!\brief Generates a list with ONE random successesor of aState
   *
@@ -15,6 +15,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
   * successors of aState is chosen.
   *
   * @param [Object] aState State of the problem
+  * @return List successesors of the state aState
   */
   public List getSuccessors(Object aState) {
     ArrayList retVal = new ArrayList();
