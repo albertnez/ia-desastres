@@ -20,11 +20,28 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
     DesastresState state = (DesastresState) aState;
     DesastresHeuristicFunction dhf = new DesastresHeuristicFunction();
 
-    for (int i = 0; i < state.getTotalHelicopters(); ++i){
-      for (int j = 0; j < state.getNumExpeditionsHeli(i); ++j){
-	for (int k = 0; k < state.getExpeditions(i).get)
+    // SWAPS
+    // Each gorup of three nested fors are for selecting each group
+    // Averall complexity is O(n^2), where n is the number of groups
+    for (int i = 0; i < state.getTotalHelicopters(); ++i) {
+      for (int j = 0; j < state.getNumExpeditionsHeli(i); ++j) {
+        for (int k = 0; k < state.getExpeditions(i).get(j).size(); ++k) {
+          // Now the second group
+          for (int l = i; l < state.getTotalHelicopters(); ++l) {
+            for (int m = 0; j < state.getNumExpeditionsHeli(l); ++m) {
+              if (l > i || m > l) {
+                for (int n = 0; n < state.getExpeditions(l).get(m).size(); ++n) {
+                  // Always possible to swap
+                  DesastresState newState = new DesastresState((DesastresState)aState);
+                  newState.swapGroupsBetweenExpeditions(i, j, k, l, m, n);
+                }
+              }
+            }
+          }
+        }
       }
     }
+
     DesastresState newState = new DesastresState(state);
     double v = dhf.getHeuristicValue(newState);
     String S = DesastresState.INTERCAMBIO_GRUPOS + " Coste(" + v + ") ---> " + newState.toString();

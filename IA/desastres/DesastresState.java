@@ -392,6 +392,81 @@ public class DesastresState {
   /*\!brief Swaps two groups between their expeditions and readjusts the solution cost.
    *        The helicopter that recieves the new group must be able to carry the amount
    *        of people of that group.
+   * @param [in] helicopterA int
+   * @param [in] expA int
+   * @param [in] groupA int
+   * @param [in] helicopterB int
+   * @param [in] expB int
+   * @param [in] groupB int
+   */
+  public void swapGroupsBetweenExpeditions(int helicopterA, int expA, int groupA, 
+                                           int helicopterB, int expB, int groupB) {
+    // Get expeditions and centers (needed to compute new trip times).
+    ArrayList<Grupo> expeditionA = helicopters.get(helicopterA).get(expA);
+    Centro centerA = getCenter(helicopterA);
+
+    ArrayList<Grupo> expeditionB = helicopters.get(helicopterB).get(expB);
+    Centro centerB = getCenter(helicopterB);
+
+    Grupo a = expeditionA.get(groupA);
+    Grupo b = expeditionB.get(groupB);
+
+    // Remove from total cost the old trip costs.
+    double tripcostA = getTripCost(centerA, expeditionA);
+    double tripcostB = getTripCost(centerB, expeditionB);
+    typeASolutionCost -= tripcostA+tripcostB;
+    boolean is_urgentA = false, is_urgentB = false;
+    boolean updateTypeB = false;
+
+    // Substract typeBCost as they have to be recalculated
+    if (expIsHighPriority(expeditionA)) is_urgentA = true;
+    if (is_urgentA) {
+      if (typeBCostHelicopters[helicopterA] == typeBSolutionCost) updateTypeB = true;
+      typeBCostHelicopters[helicopterA] -= tripcostA;
+    }
+
+    if (expIsHighPriority(expeditionB)) is_urgentB = true;
+    if (is_urgentB) {
+      if (typeBCostHelicopters[helicopterB] == typeBSolutionCost) updateTypeB = true;
+      typeBCostHelicopters[helicopterB] -= tripcostB;
+    }
+
+    // Remove groups from their original expeditions, add them to their new.
+    expeditionA.remove(a);
+    expeditionA.add(b);
+    // Same with B.
+    expeditionB.remove(b);
+    expeditionB.add(a);
+    // Rearrange the (new) expeditions to their optimum costs.
+    rearrangeExpeditionToOptimumTrip(centerA, expeditionA);
+    rearrangeExpeditionToOptimumTrip(centerB, expeditionB);
+    // Add the new (optimum) trip costs.
+    tripcostA = getTripCost(centerA, expeditionA);
+    tripcostB = getTripCost(centerB, expeditionB);
+    typeASolutionCost += tripcostA + tripcostB;
+    
+    boolean newIsUrgentA = false, newIsUrgentB = false;
+    if (expIsHighPriority(expeditionA)) newIsUrgentA = true;
+    if (expIsHighPriority(expeditionB)) newIsUrgentB = true;
+    
+    // Now update type B costs if required
+    if (newIsUrgentA) typeBCostHelicopters[helicopterA] += tripcostA;
+    if (newIsUrgentB) typeBCostHelicopters[helicopterB] += tripcostB;
+    // If one of these costs are greater or equal, update
+    if (typeBCostHelicopters[helicopterA] >= typeBSolutionCost || 
+        typeBCostHelicopters[helicopterB] >= typeBSolutionCost) {
+      typeBSolutionCost = java.lang.Math.max(typeBCostHelicopters[helicopterA], 
+                                             typeBCostHelicopters[helicopterB]);
+      updateTypeB = false;
+    }
+    //If typeB needs to be updated, update with other helicopters value
+    if (updateTypeB) {
+      updateTypeBSolutionCost();
+    }
+  }
+  /*\!brief Swaps two groups between their expeditions and readjusts the solution cost.
+   *        The helicopter that recieves the new group must be able to carry the amount
+   *        of people of that group.
    * @param [in] a Grupo
    * @param [in] b Grupo
    */
