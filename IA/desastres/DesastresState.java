@@ -269,13 +269,15 @@ public class DesastresState {
   /*\!brief Returns the sum of all trip times.
    */
   public double getTypeASolutionCost() {
-    return typeASolutionCost-10;
+    if (typeASolutionCost > 0) return typeASolutionCost-10;
+    else return 0;
   }
   
   /*\!brief Return the time when last priority 1 group is rescued.
    */
   public double getTypeBSolutionCost() {
-    return typeBSolutionCost-10;
+    if (typeBSolutionCost > 0) return typeBSolutionCost-10;
+    else return 0;
   }
   
   /*!\brief Returns the helicopters of center c
