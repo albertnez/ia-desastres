@@ -537,6 +537,78 @@ public class DesastresState {
    *        solution cost. The expedition that recieves the group should not exceed helicopters
    *        capacity nor have 3 or more groups and should exist. The expedition dst must NOT be
    *        empty.
+   * @param [in] srcH Source helicopter id
+   * @param [in] srcE index of expedition from srcH
+   * @param [in] srcG index of group of source expedition
+   * @param [in] dstH index of dst helicopter
+   * @param [in] dstE index of expedition in dst helicopter
+   */
+  public void moveGroupBetweenExpeditions(int srcH, int srcE, int srcG, int dstH, int dstE) {
+    // Expeditions
+    ArrayList<Grupo> src = helicopters.get(srcH).get(srcE);
+    ArrayList<Grupo> dst = helicopters.get(dstH).get(dstE);
+    // Source group
+    Grupo g = helicopters.get(srcH).get(srcE).get(srcG);
+
+    Centro srcCenter = getCenter(srcH);
+    Centro dstCenter = getCenter(dstH);
+
+    double srcTripCost = getTripCost(srcCenter, src);
+    double dstTripCost = getTripCost(dstCenter, dst);
+
+    typeASolutionCost -= (srcTripCost + dstTripCost);
+
+    boolean oldSrcPriority = expIsHighPriority(src);
+    boolean oldDstPriority = expIsHighPriority(dst);
+    // As typeBcost of source is the only one that can decrease, we may update it only if it equals
+    // the typeBSolutionCost now, and then src and dst cost is less.
+    boolean updateTypeB = (typeBCostHelicopters[srcH] == typeBSolutionCost);
+
+    if (oldSrcPriority) typeBCostHelicopters[srcH] -= srcTripCost;
+    if (oldDstPriority) typeBCostHelicopters[dstH] -= dstTripCost;
+
+    dst.add(g);
+    src.remove(g);
+
+    boolean nowSrcPriority = expIsHighPriority(src);
+    boolean nowDstPriority = expIsHighPriority(dst);
+
+    // Recalculate dst expedition cost
+    rearrangeExpeditionToOptimumTrip(dstCenter, dst);
+    dstTripCost = getTripCost(dstCenter, dst);
+    typeASolutionCost += dstTripCost;
+
+    if (nowDstPriority) typeBCostHelicopters[dstH] += dstTripCost;
+    if (typeBCostHelicopters[dstH] >= typeBSolutionCost) {
+      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[dstH]); 
+      updateTypeB = false;
+    }
+
+    // If the source expedition is not empty, recalculate
+    if (src.size() > 0) {
+      rearrangeExpeditionToOptimumTrip(srcCenter, src);
+      srcTripCost = getTripCost(srcCenter, src);
+      typeASolutionCost += srcTripCost;
+
+      if (nowSrcPriority) typeBCostHelicopters[srcH] += srcTripCost;
+      if (typeBCostHelicopters[srcH] >= typeBSolutionCost) {
+        typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[srcH]);
+        updateTypeB = false;
+      }
+    }
+    else {
+      helicopters.get(srcH).remove(src);
+      expeditions.remove(src);
+    }
+
+    if (updateTypeB) {
+      updateTypeBSolutionCost();
+    }
+  }
+  /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
+   *        solution cost. The expedition that recieves the group should not exceed helicopters
+   *        capacity nor have 3 or more groups and should exist. The expedition dst must NOT be
+   *        empty.
    * @param [in] g Group being moved
    * @param [in] dst Expedition destiny where g will be moved
    */
