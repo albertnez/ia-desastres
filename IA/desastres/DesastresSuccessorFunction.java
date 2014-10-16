@@ -28,6 +28,15 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
         for (int k = 0; k < state.getExpeditions(i).get(j).size(); ++k) {
           // Now the second group
           for (int l = i; l < state.getTotalHelicopters(); ++l) {
+            // Move each group 'k' to helicopter l.
+            // If helicopters are diferent, or group 'k' is from an expedition of size 2 or more, split
+            if (i != l || state.getExpeditions(i).get(j).size() > 1) {
+              DesastresState newState = new DesastresState((DesastresState)aState);
+              newState.moveGroupToNonExistentExpedition(i, j, k, l);
+              double v = dhf.getHeuristicValue(newState);
+              String S = new String(DesastresState.CREAR_EXPEDICION + " Coste(" + v + ") ---> " + newState.toString());
+              retVal.add(new Successor(S, newState));
+            }
             for (int m = 0; j < state.getNumExpeditionsHeli(l); ++m) {
               if (l > i || m > l) {
                 for (int n = 0; n < state.getExpeditions(l).get(m).size(); ++n) {

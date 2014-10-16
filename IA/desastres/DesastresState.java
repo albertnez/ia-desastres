@@ -674,6 +674,73 @@ public class DesastresState {
   }
 
   /*\!brief Creates a expedition to be performed by the helicopter
+   * dstH with the group srcG and eliminates the group srcG from its former
+   * expedition. The helicopter dstH must have all it's others
+   * expeditions full or have no expeditions at all.  
+   *
+   * @param [in] srcH Helicopter of the group being moved
+   * @param [in] srcE index of the expedition in Helicopter of group being moved
+   * @param [in] srcG index of group being moved in its expedition
+   * @param [in] dstH index of the Helicopter that performs the new expedition
+   */
+  public void moveGroupToNonExistentExpedition (int srcH, int srcE, int srcG, int dstH){
+    ArrayList<Grupo> oldexp = helicopters.get(srcH).get(srcE);
+    ArrayList<Grupo> newexp = new ArrayList<Grupo>();
+
+    Centro srcCenter = getCenter(srcH);
+    Centro dstCenter = getCenter(dstH);
+
+    Grupo g = oldexp.get(srcG);
+
+    double srcTripCost = getTripCost(srcCenter, oldexp);
+
+    typeASolutionCost -= srcTripCost;
+
+    // As typeBcost of source is the only one that can decrease, we may update it only if it equals
+    // the typeBSolutionCost now, and then src and dst cost is less.
+    boolean updateTypeB = (typeBCostHelicopters[srcH] == typeBSolutionCost);
+
+    if (expIsHighPriority(oldexp)) typeBCostHelicopters[srcH] -= srcTripCost;
+
+    oldexp.remove(g);
+    newexp.add(g);
+    helicopters.get(dstH).add(newexp);
+    expeditions.add(newexp);
+
+    rearrangeExpeditionToOptimumTrip(dstCenter, newexp);
+    double dstTripCost = getTripCost(dstCenter, newexp);
+    typeASolutionCost += dstTripCost;
+
+    //If group g was priority 1 add it to the cost of dstH
+    if (g.getPrioridad() == 1) 
+      typeBCostHelicopters[dstH] += dstTripCost;
+
+    if (typeBCostHelicopters[dstH] >= typeBSolutionCost) {
+      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[dstH]); 
+      updateTypeB = false;
+    }
+
+    // If the source expedition is not empty, recalculate
+    if (oldexp.size() > 0) {
+      rearrangeExpeditionToOptimumTrip(srcCenter, oldexp);
+      srcTripCost = getTripCost(srcCenter, oldexp);
+      typeASolutionCost += srcTripCost;
+      //if oldexp still has a group with priority 1, then add its cost to the array
+      if (expIsHighPriority(oldexp)) 
+        typeBCostHelicopters[srcH] += srcTripCost;
+
+      if (typeBCostHelicopters[srcH] >= typeBSolutionCost) {
+        typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[srcH]);
+        updateTypeB = false;
+      }
+    }
+    else {
+      helicopters.get(srcH).remove(oldexp);
+      expeditions.remove(oldexp); 
+    }
+    if (updateTypeB) updateTypeBSolutionCost();
+  }
+  /*\!brief Creates a expedition to be performed by the helicopter
    * heli with the group g and eliminates the group g from its former
    * expedition. The helicopter heli must have all it's others
    * expeditions full or have no expeditions at all.  
