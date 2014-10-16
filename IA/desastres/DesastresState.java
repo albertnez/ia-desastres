@@ -201,11 +201,27 @@ public class DesastresState {
   public ArrayList<ArrayList<Grupo>> getExpeditions(int idH) {
     return helicopters.get(idH);
   }
+  
   /*!\brief Returns all helicopters
    *
    */
   public ArrayList<ArrayList<ArrayList<Grupo>>> getAllHelicopters() {
     return helicopters;
+  }
+
+ /*!\brief Returns the total number of helicopters
+  *
+  */
+  public int getTotalHelicopters(){
+    return helicopters.size();
+  }
+  
+ /*!\brief Returns the total number of expeditions
+  * performed by helicopter idH.
+  * @param [in] idH ID of the helicopter
+  */
+  public int getNumExpeditionsHeli(int idH){
+    return helicopters.get(idH).size();
   }
   
   
