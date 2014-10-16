@@ -6,7 +6,7 @@ import aima.search.framework.SuccessorFunction;
 import java.util.*;
 
 public class DesastresSuccessorFunctionSA implements SuccessorFunction {
-
+  @SuppressWarnings("unchecked")
   /*!\brief Generates a list with ONE random successesor of aState
   *
   * Returns a List with a pair (string, State) such that State is a 
