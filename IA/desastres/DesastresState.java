@@ -94,7 +94,7 @@ public class DesastresState {
     int ind = 0;
     for (Centro c : centers) {
       for (int i = 0; i < c.getNHelicopteros(); ++i) {
-        helicoptersCenter[i] = c;
+        helicoptersCenter[ind] = c;
         ++ind;
       }
     }
