@@ -834,7 +834,7 @@ public class DesastresState {
   public String toString() {
     String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
-      retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordX() + ":\n";
+      retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordY() + ":\n";
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
       for (int j = 0; j < heli.size(); ++j){
         ArrayList<Grupo> exp = heli.get(j);
