@@ -73,7 +73,7 @@ public class DesastresState {
   public DesastresState(int nc, int nh, int ng, int seed) {
     centers = new Centros(nc, nh, seed);
     groups = new Grupos(ng, seed);
-    helicopterSpeed = 100000.0/60.0;
+    helicopterSpeed = 100.0/60.0;
     maximumHelicopterCapacity = 15;
     ncenters = nc;
     nhelicopterspercenter = nh;
