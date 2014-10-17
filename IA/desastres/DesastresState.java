@@ -155,19 +155,18 @@ public class DesastresState {
       ArrayList< ArrayList< Grupo > > dhel = d.getAllHelicopters().get(i);
       helicopters.add( new ArrayList< ArrayList< Grupo > >() );
       for(int j=0; j<dhel.size(); ++j) {
-	ArrayList < Grupo > dexp = dhel.get(j);
-	helicopters.get(i).add(new ArrayList< Grupo >());
-	for(int k=0; k<dexp.size(); ++k)
-	  helicopters.get(i).get(j).add(dexp.get(k));
+        ArrayList < Grupo > dexp = dhel.get(j);
+        helicopters.get(i).add(new ArrayList< Grupo >());
+          for(int k=0; k<dexp.size(); ++k)
+            helicopters.get(i).get(j).add(dexp.get(k));
       }
     }
     
-
-    for(int i=0; i<typeBCostHelicopters.length; ++i)
+    for(int i=0; i<d.getTypeBCostHelicopters().length; ++i)
       typeBCostHelicopters[i] = d.getTypeBCostHelicopters()[i];
     
-    typeASolutionCost 	 = d.getTypeASolutionCost();
-    typeBSolutionCost 	 = d.getTypeBSolutionCost();
+    typeASolutionCost    = d.getTypeASolutionCost();
+    typeBSolutionCost    = d.getTypeBSolutionCost();
     
   }
   

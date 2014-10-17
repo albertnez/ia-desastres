@@ -15,7 +15,7 @@ public class DesastresMain {
     System.out.println("It works!");
     DesastresState d = new DesastresState(10, 10, 10, 1234);
     TSPHillClimbingSearch(d);
-    TSPSimulatedAnnealingSearch(d);
+    //TSPSimulatedAnnealingSearch(d);
   }
       
   private static void TSPHillClimbingSearch(DesastresState d) {
