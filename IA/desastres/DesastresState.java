@@ -145,7 +145,7 @@ public class DesastresState {
     numberHelisWithExps  = d.getNumHelisWithExps();
     typeASolutionCost    = d.getTypeASolutionCost()+(10.0*numberHelisWithExps);  // Add 10.0 as this function substracts 10 from it's internal value
     typeBSolutionCost    = d.getTypeBSolutionCost()+10.0;
-    
+
   }
   
 
@@ -246,7 +246,7 @@ public class DesastresState {
    * @return double the time it takes to rescue all the priority 1 groups
    */
   public double getTypeBSolutionCost() {
-    if (typeBSolutionCost > 0) return typeBSolutionCost-10;
+    if (typeBSolutionCost > 0) return typeBSolutionCost-10.0;
     else return 0.0;
   }
 
