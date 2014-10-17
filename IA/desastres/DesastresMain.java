@@ -15,55 +15,55 @@ public class DesastresMain {
     System.out.println("It works!");
     DesastresState d = new DesastresState(10, 10, 10, 1234);
     TSPHillClimbingSearch(d);
-    TSPSimulatedAnnealingSearch(d);
+    //TSPSimulatedAnnealingSearch(d);
   }
-        
+      
   private static void TSPHillClimbingSearch(DesastresState d) {
-      System.out.println("\nTSP HillClimbing  -->");
-      try {
-	  Problem problem =  new Problem(d,new DesastresSuccessorFunction(), new DesastresGoalTest(),new DesastresHeuristicFunction());
-	  Search search =  new HillClimbingSearch();
-	  SearchAgent agent = new SearchAgent(problem,search);
-	  
-	  System.out.println();
-	  printActions(agent.getActions());
-	  printInstrumentation(agent.getInstrumentation());
-      } catch (Exception e) {
-	  e.printStackTrace();
-      }
+    System.out.println("\nTSP HillClimbing  -->");
+    try {
+      Problem problem =  new Problem(d,new DesastresSuccessorFunction(), new DesastresGoalTest(),new DesastresHeuristicFunction());
+      Search search =  new HillClimbingSearch();
+      SearchAgent agent = new SearchAgent(problem,search);
+      
+      System.out.println();
+      printActions(agent.getActions());
+      printInstrumentation(agent.getInstrumentation());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
-  
+
   private static void TSPSimulatedAnnealingSearch(DesastresState d) {
-      System.out.println("\nTSP Simulated Annealing  -->");
-      try {
-	  Problem problem =  new Problem(d,new DesastresSuccessorFunctionSA(), new DesastresGoalTest(),new DesastresHeuristicFunction());
-	  SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
-	  //search.traceOn();
-	  SearchAgent agent = new SearchAgent(problem,search);
-	  
-	  System.out.println();
-	  printActions(agent.getActions());
-	  printInstrumentation(agent.getInstrumentation());
-      } catch (Exception e) {
-	  e.printStackTrace();
-      }
+    System.out.println("\nTSP Simulated Annealing  -->");
+    try {
+      Problem problem =  new Problem(d,new DesastresSuccessorFunctionSA(), new DesastresGoalTest(),new DesastresHeuristicFunction());
+      SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
+      //search.traceOn();
+      SearchAgent agent = new SearchAgent(problem,search);
+      
+      System.out.println();
+      printActions(agent.getActions());
+      printInstrumentation(agent.getInstrumentation());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
-  
+
   private static void printInstrumentation(Properties properties) {
       Iterator keys = properties.keySet().iterator();
       while (keys.hasNext()) {
-	  String key = (String) keys.next();
-	  String property = properties.getProperty(key);
-	  System.out.println(key + " : " + property);
+        String key = (String) keys.next();
+        String property = properties.getProperty(key);
+        System.out.println(key + " : " + property);
       }
-      
+    
   }
-  
+
   private static void printActions(List actions) {
-      for (int i = 0; i < actions.size(); i++) {
-	  String action = (String) actions.get(i);
-	  System.out.println(action);
-      }
+    for (int i = 0; i < actions.size(); i++) {
+      String action = (String) actions.get(i);
+      System.out.println(action);
+    }
   }
-  
+
 }
