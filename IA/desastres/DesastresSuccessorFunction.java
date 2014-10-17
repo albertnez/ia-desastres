@@ -22,53 +22,53 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
 
     // Each gorup of three nested fors are for selecting each group
     // Averall complexity is O(n^2), where n is the number of groups
-    for (int i = 0; i < state.getTotalHelicopters(); ++i) {
-      for (int j = 0; j < state.getNumExpeditionsHeli(i); ++j) {
-        for (int k = 0; k < state.getExpeditions(i).get(j).size(); ++k) {
+    for (int srcH = 0; srcH < state.getTotalHelicopters(); ++srcH) {
+      for (int srcE = 0; srcE < state.getNumExpeditionsHeli(srcH); ++srcE) {
+        for (int srcG = 0; srcG < state.getExpeditions(srcH).get(srcE).size(); ++srcG) {
           // Now the second group
-          for (int l = i; l < state.getTotalHelicopters(); ++l) {
-            // Move each group 'k' to helicopter l.
-            // If helicopters are diferent, or group 'k' is from an expedition of size 2 or more, split
-            if (i != l || state.getExpeditions(i).get(j).size() > 1) {
+          for (int dstH = srcH; dstH < state.getTotalHelicopters(); ++dstH) {
+            // Move each group 'srcG' to helicopter dstH.
+            // If helicopters are diferent, or group 'srcG' is from an expedition of size 2 or more, split
+            if (srcH != dstH || state.getExpeditions(srcH).get(srcE).size() > 1) {
               DesastresState newState = new DesastresState((DesastresState)aState);
-              newState.moveGroupToNonExistentExpedition(i, j, k, l);
+              newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
               double v = dhf.getHeuristicValue(newState);
-              String S = new String(DesastresState.CREAR_EXPEDICION + k + " de la expedición " 
-                         + j + " del helicoptero " + i + " a una nueva expedición del helicoptero " 
-                         + l + " Coste(" + v + ") ---> " + newState.toString());
+              String S = new String(DesastresState.CREAR_EXPEDICION + srcG + " de la expedición " 
+                         + srcE + " del helicoptero " + srcH + " a una nueva expedición del helicoptero " 
+                         + dstH + " Coste(" + v + ") ---> " + newState.toString());
               retVal.add(new Successor(S, newState));
             }
-            for (int m = 0; m < state.getNumExpeditionsHeli(l); ++m) {
-              if (l > i || m > j) {
-                for (int n = 0; n < state.getExpeditions(l).get(m).size(); ++n) {
+            for (int dstE = 0; dstE < state.getNumExpeditionsHeli(dstH); ++dstE) {
+              if (dstH > srcH || dstE > srcE) {
+                for (int dstG = 0; dstG < state.getExpeditions(dstH).get(dstE).size(); ++dstG) {
                   // SWAP, always possible
                   DesastresState newState = new DesastresState((DesastresState)aState);
-                  newState.swapGroupsBetweenExpeditions(i, j, k, l, m, n);
+                  newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
                   // aima stuff
                   double v = dhf.getHeuristicValue(newState);
-                  String S = new String(DesastresState.INTERCAMBIO_GRUPOS + k + " de la expedición " 
-                         + j + " del helicoptero " + i + " con el grupo " + n + " de la expedición " 
-                         + m + " del helicoptero " + l + " Coste(" + v + ") ---> "+ newState.toString());
+                  String S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
+                         + srcE + " del helicoptero " + srcH + " con el grupo " + dstG + " de la expedición " 
+                         + dstE + " del helicoptero " + dstH + " Coste(" + v + ") ---> "+ newState.toString());
                   retVal.add(new Successor(S, newState));
 
                   // Group move
-                  if (state.getExpeditions(l).get(m).size() < 3) {
+                  if (state.getExpeditions(dstH).get(dstE).size() < 3) {
                     newState = new DesastresState((DesastresState)aState);
-                    newState.moveGroupBetweenExpeditions(i, j, k, l, m);
+                    newState.moveGroupBetweenExpeditions(srcH, srcE, srcG, dstH, dstE);
                     v = dhf.getHeuristicValue(newState);
-                    S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + k + " de la expedición " 
-                         + j + " del helicoptero " + i + " a la expedición " + m + " del helicoptero " 
-                         + l + " Coste(" + v + ") ---> "+ newState.toString());
+                    S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + srcG + " de la expedición " 
+                         + srcE + " del helicoptero " + srcH + " a la expedición " + dstE + " del helicoptero " 
+                         + dstH + " Coste(" + v + ") ---> "+ newState.toString());
                     retVal.add(new Successor(S, newState));
                   }
-                  // Move group n to expedition j if there is space
-                  if (state.getExpeditions(i).get(j).size() < 3) {
+                  // Move group dstG to expedition srcE if there is space
+                  if (state.getExpeditions(srcH).get(srcE).size() < 3) {
                     newState = new DesastresState((DesastresState)aState);
-                    newState.moveGroupBetweenExpeditions(l, m, n, i, j);
+                    newState.moveGroupBetweenExpeditions(dstH, dstE, dstG, srcH, srcE);
                     v = dhf.getHeuristicValue(newState);
-                    S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + n + " de la expedición " 
-                         + m + " del helicoptero " + l + " a la expedición " + j + " del helicoptero " 
-                         + i + " Coste(" + v + ") ---> "+ newState.toString());
+                    S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + dstG + " de la expedición " 
+                         + dstE + " del helicoptero " + dstH + " a la expedición " + srcE + " del helicoptero " 
+                         + srcH + " Coste(" + v + ") ---> "+ newState.toString());
                     retVal.add(new Successor(S, newState));
                   }
                 }
