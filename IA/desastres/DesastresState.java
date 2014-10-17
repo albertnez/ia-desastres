@@ -8,9 +8,9 @@ import java.lang.Math;
 
 public class DesastresState {
   //Strings for printing out the result
-  public static String INTERCAMBIO_GRUPOS = "Intercambio de los grupos";
-  public static String MOVER_GRUPO_EXPEDICION = "Movemos un grupo a una expedición";
-  public static String CREAR_EXPEDICION = "Creamos una expedicion y movemos el grupo";
+  public static String INTERCAMBIO_GRUPOS = "Intercambio de los grupos ";
+  public static String MOVER_GRUPO_EXPEDICION = "Movemos el grupo ";
+  public static String CREAR_EXPEDICION = "Creamos una expedicion y movemos el grupo ";
 
   private static Centros centers;
   private static Grupos groups;
