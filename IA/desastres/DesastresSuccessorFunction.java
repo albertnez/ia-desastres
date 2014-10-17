@@ -39,7 +39,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
               retVal.add(new Successor(S, newState));
             }
             for (int m = 0; m < state.getNumExpeditionsHeli(l); ++m) {
-              if (l > i || m > l) {
+              if (l > i || m > j) {
                 for (int n = 0; n < state.getExpeditions(l).get(m).size(); ++n) {
                   // SWAP, always possible
                   DesastresState newState = new DesastresState((DesastresState)aState);
