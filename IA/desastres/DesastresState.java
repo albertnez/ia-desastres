@@ -36,6 +36,8 @@ public class DesastresState {
   private double typeASolutionCost;
   // Time when last last priority 1 groups is rescued.
   private double typeBSolutionCost;
+  //Number of helicopters that have at least one expedition.
+  private int numberHelisWithExps;
 
   /*!\brief Returns true if the expedition contains a priority 1 group.
    *
@@ -79,6 +81,7 @@ public class DesastresState {
     typeBCostHelicopters = new double[nhelicopterspercenter * ncenters];
     typeASolutionCost = 0.0;
     typeBSolutionCost = 0.0;
+    numberHelisWithExps = java.lang.Math.min(nc*nh, ng);
     // Assign each group to one expedition.
     ArrayList<ArrayList<Grupo>> expeditions = new ArrayList<ArrayList<Grupo>>(ngroups);
     for (Grupo g : groups) {
@@ -158,10 +161,11 @@ public class DesastresState {
     
     typeASolutionCost    = d.getTypeASolutionCost();
     typeBSolutionCost    = d.getTypeBSolutionCost();
+    numberHelisWithExps  = d.getNumHelisWithExps();
     
   }
   
-  
+
   /*!\brief Returns the number of centers
    * @return int the number of centers of the state
    */
@@ -244,8 +248,15 @@ public class DesastresState {
    * @return double the time it takes to rescue all the groups
    */
   public double getTypeASolutionCost() {
-    if (typeASolutionCost > 0) return typeASolutionCost-10;
-    else return 0;
+    if (typeASolutionCost > 0) return typeASolutionCost-(10.0*numberHelisWithExps);
+    else return 0.0;
+  }
+
+  /*\!brief Returns the Number of helicopters that have a expedition
+   * @return int tNumber of helicopters that have a expedition
+   */
+  public int getNumHelisWithExps() {
+    return numberHelisWithExps;
   }
   
   /*\!brief Return the time when last priority 1 group is rescued.
@@ -253,7 +264,7 @@ public class DesastresState {
    */
   public double getTypeBSolutionCost() {
     if (typeBSolutionCost > 0) return typeBSolutionCost-10;
-    else return 0;
+    else return 0.0;
   }
 
   /*!\brief Returns the distance between two groups
@@ -482,6 +493,7 @@ public class DesastresState {
     }
     else {
       helicopters.get(srcH).remove(src);
+      if (helicopters.get(srcH).size() == 0) --numberHelisWithExps;
     }
 
     if (updateTypeB) {
@@ -522,6 +534,8 @@ public class DesastresState {
     newexp.add(g);
     helicopters.get(dstH).add(newexp);
 
+    if (helicopters.get(dstH).size() == 1) ++numberHelisWithExps;
+
     rearrangeExpeditionToOptimumTrip(dstCenter, newexp);
     double dstTripCost = getTripCost(dstCenter, newexp);
     typeASolutionCost += dstTripCost;
@@ -551,6 +565,7 @@ public class DesastresState {
     }
     else {
       helicopters.get(srcH).remove(oldexp);
+      if (helicopters.get(srcH).size() == 0) --numberHelisWithExps;
     }
     if (updateTypeB) updateTypeBSolutionCost();
   }
