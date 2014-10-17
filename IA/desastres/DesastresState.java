@@ -111,28 +111,11 @@ public class DesastresState {
       //update cost values
       double cost = getTripCost(helicoptersCenter[ind], expeditions.get(i));
       typeASolutionCost += cost;
-      if (expIsHighPriority(expeditions.get(i))) typeBSolutionCost += cost;
-      ind = (ind + 1)%(nhelicopterspercenter*ncenters);
-    }
-    // Rearrange expeditions in each helicopter, so that priority 1 ones are executed first
-
-    for (int hInd = 0; hInd < nhelicopterspercenter*ncenters; ++hInd) {
-      ArrayList<ArrayList<Grupo>> heli = helicopters.get(hInd);
-      int rInd = 0;
-      double cost = 0.0;
-      for (int i = 0; i < heli.size(); ++i) {
-        if (expIsHighPriority(heli.get(0))) {
-          if (i != rInd) {
-            Collections.swap(heli, rInd, i);
-          }
-          cost += getTripCost(helicoptersCenter[hInd], heli.get(rInd));
-          ++rInd;
-        }
+      if (expIsHighPriority(expeditions.get(i))) {
+        typeBSolutionCost += cost;
+        typeBCostHelicopters[ind] += cost;
       }
-      // Update global typeBSolution cost. typeBSolution will always have a +10 in time
-      // that should be substracted when retrieving its value
-      typeBCostHelicopters[hInd] = cost;
-      typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, cost);
+      ind = (ind + 1)%(nhelicopterspercenter*ncenters);
     }
   }
 
