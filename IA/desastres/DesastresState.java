@@ -832,13 +832,13 @@ public class DesastresState {
    *
    */
   public String toString() {
-    String retVal = "";
+    String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
       retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordX() + ":\n";
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
       for (int j = 0; j < heli.size(); ++j){
         ArrayList<Grupo> exp = heli.get(j);
-        retVal += "\tExpedición " + expeditions.indexOf(exp) + " recoje a los grupos:\n";
+        retVal += "\tExpedición " + j + " del helicoptero recoje a los grupos:\n";
         for (int k =0; k < exp.size(); ++k){
           retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
         }
