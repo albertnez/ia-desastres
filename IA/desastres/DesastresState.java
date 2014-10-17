@@ -271,6 +271,26 @@ public class DesastresState {
   public double getDistBetweenCenterGroup (Centro c, Grupo g) {
     return Math.sqrt( Math.pow(g.getCoordX()-c.getCoordX(),2) +  Math.pow(c.getCoordY()-g.getCoordY(),2) );
   }
+
+  /*!\brief Returns true if the helicopter that carries the expedition
+   * dstE has enough room to carry the group identified by the helicopter
+   * srcH and the expedition srcE
+   *
+   * @param [in] dstH Helicopter that carries out the expedition   
+   * @param [in] dstE Expedition that will carry the group    
+   * @param [in] srcH Helicopter that carries the group g    
+   * @param [in] srcH Expedition that carries the group g      
+   * @param [in] g group that wants to fit in the expedition dstE     
+   * @return  boolean that indicates if the group can be fit in the
+   * expedition or not
+   */
+  public boolean doesGroupFitInExp (int dstH, int dstE, int srcH, int srcE , int g) {
+    int sum = 0;
+    for (int i =0; i < helicopters.get(dstH).get(dstE).size(); ++i){
+      sum += helicopters.get(dstH).get(dstE).get(i).getNPersonas();
+    }
+    return (15 <= sum + helicopters.get(srcH).get(srcE).get(g).getNPersonas());
+  }
   
   /*!\brief Returns the time (in minutes) that would take to rescue all groups in an expedition
    *  if they are rescued in the given order and from a given center.
