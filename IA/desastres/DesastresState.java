@@ -142,8 +142,8 @@ public class DesastresState {
     for(int i=0; i<d.getTypeBCostHelicopters().length; ++i)
       typeBCostHelicopters[i] = d.getTypeBCostHelicopters()[i];
     
-    typeASolutionCost    = d.getTypeASolutionCost();
-    typeBSolutionCost    = d.getTypeBSolutionCost();
+    typeASolutionCost    = d.getTypeASolutionCost()+10.0;  // Add 10.0 as this function substracts 10 from it's internal value
+    typeBSolutionCost    = d.getTypeBSolutionCost()+10.0;
     numberHelisWithExps  = d.getNumHelisWithExps();
     
   }
