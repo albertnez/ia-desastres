@@ -41,7 +41,6 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                 for (int n = 0; n < state.getExpeditions(l).get(m).size(); ++n) {
                   // SWAP, always possible
                   DesastresState newState = new DesastresState((DesastresState)aState);
-                  System.out.println(i+ " "+ j + " "+ k + " "+ l + " "+ m + " "+ n);
                   newState.swapGroupsBetweenExpeditions(i, j, k, l, m, n);
                   // aima stuff
                   double v = dhf.getHeuristicValue(newState);
