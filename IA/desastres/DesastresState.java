@@ -31,7 +31,7 @@ public class DesastresState {
   private ArrayList<ArrayList<Grupo>> expeditions;
   // Helicopters containing the expeditions. For each helicopters, priority 1 expeditions
   // will appear before priority 2 expeditions.
-  private ArrayList<ArrayList<ArrayList<Grupo>>> helicopters;
+  private ArrayList< ArrayList< ArrayList<Grupo> > > helicopters;
   // Time when last priority 1 groups is rescued in each helicopter
   private double[] typeBCostHelicopters;
   // Sum of all trip times.
@@ -140,11 +140,35 @@ public class DesastresState {
    * @param [in] d DesastresState object we want to copy
    */
   public DesastresState(DesastresState d) {
-    expeditions = new ArrayList< ArrayList<Grupo> > (d.getAllExpeditions());
-    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>> (d.getAllHelicopters());
-    typeBCostHelicopters = d.getTypeBCostHelicopters().clone();
-    typeASolutionCost = d.getTypeASolutionCost();
-    typeBSolutionCost = d.getTypeBSolutionCost();
+    
+    expeditions = new ArrayList< ArrayList<Grupo> > ();
+    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>> ();
+    typeBCostHelicopters = new double[d.getTypeBCostHelicopters().length];
+    
+    for(int i=0; i<d.getAllExpeditions().size(); ++i) {
+      ArrayList< Grupo > dexp = d.getAllExpeditions().get(i);
+      expeditions.add(new ArrayList<Grupo>());
+      for(int j=0; j<dexp.size(); ++j) expeditions.get(i).add(dexp.get(j));
+    }
+    
+    for(int i=0; i<d.getAllHelicopters().size(); ++i) {
+      ArrayList< ArrayList< Grupo > > dhel = d.getAllHelicopters().get(i);
+      helicopters.add( new ArrayList< ArrayList< Grupo > >() );
+      for(int j=0; j<dhel.size(); ++j) {
+	ArrayList < Grupo > dexp = dhel.get(j);
+	helicopters.get(i).add(new ArrayList< Grupo >());
+	for(int k=0; k<dexp.size(); ++k)
+	  helicopters.get(i).get(j).add(dexp.get(k));
+      }
+    }
+    
+
+    for(int i=0; i<typeBCostHelicopters.length; ++i)
+      typeBCostHelicopters[i] = d.getTypeBCostHelicopters()[i];
+    
+    typeASolutionCost 	 = d.getTypeASolutionCost();
+    typeBSolutionCost 	 = d.getTypeBSolutionCost();
+    
   }
   
   
@@ -445,7 +469,8 @@ public class DesastresState {
     tripcostB = getTripCost(centerB, expeditionB);
     typeASolutionCost += tripcostA + tripcostB;
     
-    boolean newIsUrgentA = false, newIsUrgentB = false;
+    boolean newIsUrgentA = false; 
+    boolean newIsUrgentB = false;
     if (expIsHighPriority(expeditionA)) newIsUrgentA = true;
     if (expIsHighPriority(expeditionB)) newIsUrgentB = true;
     
