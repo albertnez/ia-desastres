@@ -27,8 +27,6 @@ public class DesastresState {
   private static double helicopterSpeed;
   // Maximum people an helicopter can hold at the same time.
   private static int maximumHelicopterCapacity;
-  // Expeditions containing groups
-  private ArrayList<ArrayList<Grupo>> expeditions;
   // Helicopters containing the expeditions. For each helicopters, priority 1 expeditions
   // will appear before priority 2 expeditions.
   private ArrayList< ArrayList< ArrayList<Grupo> > > helicopters;
@@ -82,7 +80,7 @@ public class DesastresState {
     typeASolutionCost = 0.0;
     typeBSolutionCost = 0.0;
     // Assign each group to one expedition.
-    expeditions = new ArrayList<ArrayList<Grupo>>(ngroups);
+    ArrayList<ArrayList<Grupo>> expeditions = new ArrayList<ArrayList<Grupo>>(ngroups);
     for (Grupo g : groups) {
       ArrayList<Grupo> a = new ArrayList<Grupo>();
       a.add(g);
@@ -141,15 +139,8 @@ public class DesastresState {
    */
   public DesastresState(DesastresState d) {
     
-    expeditions = new ArrayList< ArrayList<Grupo> > ();
     helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>> ();
     typeBCostHelicopters = new double[d.getTypeBCostHelicopters().length];
-    
-    for(int i=0; i<d.getAllExpeditions().size(); ++i) {
-      ArrayList< Grupo > dexp = d.getAllExpeditions().get(i);
-      expeditions.add(new ArrayList<Grupo>());
-      for(int j=0; j<dexp.size(); ++j) expeditions.get(i).add(dexp.get(j));
-    }
     
     for(int i=0; i<d.getAllHelicopters().size(); ++i) {
       ArrayList< ArrayList< Grupo > > dhel = d.getAllHelicopters().get(i);
@@ -231,55 +222,6 @@ public class DesastresState {
     return helicopters.get(idH).size();
   }
   
-  
-  /*!\brief Returns the id of the expedition in which the group g
-   * is assigned to. If the group g does not have any 
-   * expedition assigned to him, it returns -1;
-   * @param [in] g Grupo
-   * @return int the id of the expediton that contains the group g
-   */
-  public int getExpedition(Grupo g){
-    for (int i = 0; i < expeditions.size(); ++i){
-      ArrayList<Grupo> ex = expeditions.get(i);
-      int s = ex.size();
-      for (int j = 0; j < s; ++j){
-        if (ex.get(j) == g) return i;
-      }
-    }
-    return -1;
-  }
-
-  /*!\brief Returns all expeditions.
-  */
-  public ArrayList< ArrayList<Grupo> > getAllExpeditions() {
-    return expeditions;
-  }
-  
-  
-  /*!\brief Returns the helicopter id in which the expedition 
-   * exp is assigned to. If the expedition exp does not
-   * exist, a -1 is returned. 
-   * @param [in] exp ArrayList of the Grupos that form the expedition
-   * @return int the id of the helicopter that performs the expedition 
-   * exp
-   */
-  public int getHelicopter(ArrayList<Grupo> exp){
-    for (int i = 0; i < helicopters.size(); ++i){
-      if (helicopters.get(i).contains(exp)) return i;
-    }
-    return -1;
-  }
-
-  /*!\brief Returns the groups assigned to
-   * the expedition id.
-   * @param [in] idE ID of the expedition
-   * @return ArrayList<Grupo> groups of the expedition with
-   * id idE
-   */
-  public ArrayList<Grupo> getGroups(int idE){
-    return expeditions.get(idE);
-  }
-
   /*!\brief Returns the center in which helicopter
    * id belongs to
    * @param [in] idH ID of the helicopter 
@@ -312,20 +254,6 @@ public class DesastresState {
   public double getTypeBSolutionCost() {
     if (typeBSolutionCost > 0) return typeBSolutionCost-10;
     else return 0;
-  }
-  
-  /*!\brief Returns the helicopters of center c
-   *
-   * @param [in] c Centro   
-   * @return ArrayList<Integer> array containing the id's of all the helicopters 
-   * assigned to the center c
-   */
-  public ArrayList<Integer> getHelicopters(Centro c){
-    ArrayList<Integer> retVal = new ArrayList<Integer>();
-    for (int i = 0; i < helicoptersCenter.length; ++i){
-      if (helicoptersCenter[i] == c) retVal.add(i);
-    }
-    return retVal;
   }
 
   /*!\brief Returns the distance between two groups
@@ -554,7 +482,6 @@ public class DesastresState {
     }
     else {
       helicopters.get(srcH).remove(src);
-      expeditions.remove(src);
     }
 
     if (updateTypeB) {
@@ -594,7 +521,6 @@ public class DesastresState {
     oldexp.remove(g);
     newexp.add(g);
     helicopters.get(dstH).add(newexp);
-    expeditions.add(newexp);
 
     rearrangeExpeditionToOptimumTrip(dstCenter, newexp);
     double dstTripCost = getTripCost(dstCenter, newexp);
@@ -625,7 +551,6 @@ public class DesastresState {
     }
     else {
       helicopters.get(srcH).remove(oldexp);
-      expeditions.remove(oldexp); 
     }
     if (updateTypeB) updateTypeBSolutionCost();
   }
