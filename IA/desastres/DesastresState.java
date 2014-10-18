@@ -405,9 +405,6 @@ public class DesastresState {
     // Same with B.
     expeditionB.remove(b);
     expeditionB.add(a);
-    // Rearrange the (new) expeditions to their optimum costs.
-    rearrangeExpeditionToOptimumTrip(centerA, expeditionA);
-    rearrangeExpeditionToOptimumTrip(centerB, expeditionB);
     // Add the new (optimum) trip costs.
     tripcostA = getTripCost(centerA, expeditionA);
     tripcostB = getTripCost(centerB, expeditionB);
@@ -433,7 +430,31 @@ public class DesastresState {
       updateTypeBSolutionCost();
     }
   }
-
+  /*\!brief Swaps two groups from the same expedition
+   * @param [in] srcH Source helicopter id
+   * @param [in] srcE index of expedition from srcH
+   * @param [in] g1 first group
+   * @param [in] g2 second group
+   */
+  public void swapGroupsFromSameExp(int srcH, int srcE, int g1, int g2) {
+    ArrayList<Grupo> expedition = helicopters.get(srcH).get(srcE);
+    Centro center = getCenter(srcH);
+    double oldCost = getTripCost(center, expedition);
+    typeASolutionCost -= oldCost;
+    Grupo tmp = expedition.get(g1);
+    expedition.set(g1, expedition.get(g2));
+    expedition.set(g2, tmp);
+    double newCost = getTripCost(center, expedition);
+    typeASolutionCost = newCost;
+    if(expIsHighPriority(expedition)) {
+        typeBCostHelicopters[srcH] -= oldCost;
+        typeBCostHelicopters[srcH] += newCost;
+        if(typeBCostHelicopters[srcH]>=typeBSolutionCost)
+            typeBSolutionCost = typeBCostHelicopters[srcH];
+    }
+    
+  }
+  
   /*\!brief Moves a group from its expedition, to the desired expedition and readjusts the
    *        solution cost. The expedition that recieves the group should not exceed helicopters
    *        capacity nor have 3 or more groups and should exist. The expedition dst must NOT be
@@ -474,8 +495,6 @@ public class DesastresState {
     boolean nowSrcPriority = expIsHighPriority(src);
     boolean nowDstPriority = expIsHighPriority(dst);
 
-    // Recalculate dst expedition cost
-    rearrangeExpeditionToOptimumTrip(dstCenter, dst);
     dstTripCost = getTripCost(dstCenter, dst);
     typeASolutionCost += dstTripCost;
 
@@ -487,7 +506,6 @@ public class DesastresState {
 
     // If the source expedition is not empty, recalculate
     if (src.size() > 0) {
-      rearrangeExpeditionToOptimumTrip(srcCenter, src);
       srcTripCost = getTripCost(srcCenter, src);
       typeASolutionCost += srcTripCost;
 
@@ -542,7 +560,6 @@ public class DesastresState {
 
     if (helicopters.get(dstH).size() == 1) ++numberHelisWithExps;
 
-    rearrangeExpeditionToOptimumTrip(dstCenter, newexp);
     double dstTripCost = getTripCost(dstCenter, newexp);
     typeASolutionCost += dstTripCost;
 
@@ -557,7 +574,6 @@ public class DesastresState {
 
     // If the source expedition is not empty, recalculate
     if (oldexp.size() > 0) {
-      rearrangeExpeditionToOptimumTrip(srcCenter, oldexp);
       srcTripCost = getTripCost(srcCenter, oldexp);
       typeASolutionCost += srcTripCost;
       //if oldexp still has a group with priority 1, then add its cost to the array
