@@ -449,8 +449,7 @@ public class DesastresState {
     if(expIsHighPriority(expedition)) {
         typeBCostHelicopters[srcH] -= oldCost;
         typeBCostHelicopters[srcH] += newCost;
-        if(typeBCostHelicopters[srcH]>=typeBSolutionCost)
-            typeBSolutionCost = typeBCostHelicopters[srcH];
+        updateTypeBSolutionCost();
     }
     
   }
