@@ -25,6 +25,29 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
     // Averall complexity is O(n^2), where n is the number of groups
     for (int srcH = 0; srcH < state.getTotalHelicopters(); ++srcH) {
       for (int srcE = 0; srcE < state.getNumExpeditionsHeli(srcH); ++srcE) {
+        // If there are 3 groups in this expedition
+        if (state.getExpeditions(srcH).get(srcE).size() == 3) {
+          int groupA = 0, groupB = 1;
+          DesastresState newState = new DesastresState((DesastresState)aState);
+          newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
+          double v = dhf.getHeuristicValue(newState);
+          String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
+                     + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                     + " Coste(" + v + ") ---> " + newState.toString());
+          retVal.add(new Successor(S, newState));
+
+          //Now the other swap
+          // Undo swap...
+          newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
+          // New swap
+          groupA = 2;
+          newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
+          v = dhf.getHeuristicValue(newState);
+          S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
+                     + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                     + " Coste(" + v + ") ---> " + newState.toString());
+          retVal.add(new Successor(S, newState));
+        }
         for (int srcG = 0; srcG < state.getExpeditions(srcH).get(srcE).size(); ++srcG) {
           // Now the second group
           for (int dstH = srcH; dstH < state.getTotalHelicopters(); ++dstH) {

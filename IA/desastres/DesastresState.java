@@ -445,7 +445,7 @@ public class DesastresState {
     expedition.set(g1, expedition.get(g2));
     expedition.set(g2, tmp);
     double newCost = getTripCost(center, expedition);
-    typeASolutionCost = newCost;
+    typeASolutionCost += newCost;
     if(expIsHighPriority(expedition)) {
         typeBCostHelicopters[srcH] -= oldCost;
         typeBCostHelicopters[srcH] += newCost;
