@@ -345,7 +345,10 @@ public class DesastresState {
                 double theOtherCost = getTripCost(c, test);
                 if(theOtherCost<currentCost) {
                     currentCost = theOtherCost;
-                    expedition = new ArrayList<Grupo>(test);
+                    //expedition = new ArrayList<Grupo>(test);
+                    for (int ind = 0; ind < expedition.size(); ++ind) {
+                      expedition.set(ind, test.get(ind));
+                    }
                 }
               }
             }
