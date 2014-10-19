@@ -38,8 +38,6 @@ public class DesastresState {
   private double typeBSolutionCost;
   //Number of helicopters that have at least one expedition.
   private int numberHelisWithExps;
-  //constant of the weight
-  private static double heuristicWeight;
 
   /*!\brief Returns true if the expedition contains a priority 1 group.
    *
