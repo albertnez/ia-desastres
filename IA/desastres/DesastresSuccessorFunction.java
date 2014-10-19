@@ -31,10 +31,10 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           DesastresState newState = new DesastresState((DesastresState)aState);
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           double v = dhf.getHeuristicValue(newState);
-          String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
+          /*String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
                      + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
-                     + " Coste(" + v + ") ---> " + newState.toString());
-          retVal.add(new Successor(S, newState));
+                     + " Coste(" + v + ") ---> " + newState.toString());*/
+          retVal.add(new Successor("", newState));
 
           //Now the other swap
           // Undo swap...
@@ -43,10 +43,10 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           groupA = 2;
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           v = dhf.getHeuristicValue(newState);
-          S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
+          /*S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
                      + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
-                     + " Coste(" + v + ") ---> " + newState.toString());
-          retVal.add(new Successor(S, newState));
+                     + " Coste(" + v + ") ---> " + newState.toString());*/
+          retVal.add(new Successor("", newState));
         }
         for (int srcG = 0; srcG < state.getExpeditions(srcH).get(srcE).size(); ++srcG) {
           // Now the second group
@@ -57,10 +57,10 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
               DesastresState newState = new DesastresState((DesastresState)aState);
               newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
               double v = dhf.getHeuristicValue(newState);
-              String S = new String(DesastresState.CREAR_EXPEDICION + srcG + " de la expedición " 
+              /*String S = new String(DesastresState.CREAR_EXPEDICION + srcG + " de la expedición " 
                          + srcE + " del helicoptero " + srcH + " a una nueva expedición del helicoptero " 
-                         + dstH + " Coste(" + v + ") ---> " + newState.toString());
-              retVal.add(new Successor(S, newState));
+                         + dstH + " Coste(" + v + ") ---> " + newState.toString());*/
+              retVal.add(new Successor("", newState));
             }
             for (int dstE = 0; dstE < state.getNumExpeditionsHeli(dstH); ++dstE) {
               if (dstH > srcH || dstE > srcE) {
@@ -72,10 +72,10 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                     newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
                     // aima stuff
                     double v = dhf.getHeuristicValue(newState);
-                    String S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
+                    /*String S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
                            + srcE + " del helicoptero " + srcH + " con el grupo " + dstG + " de la expedición " 
-                           + dstE + " del helicoptero " + dstH + " Coste(" + v + ") ---> "+ newState.toString());
-                    retVal.add(new Successor(S, newState));
+                           + dstE + " del helicoptero " + dstH + " Coste(" + v + ") ---> "+ newState.toString());*/
+                    retVal.add(new Successor("", newState));
                   }
                   
                   // Group move, only possible if the expedition has room for the group
@@ -86,17 +86,17 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                     String S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + srcG + " de la expedición " 
                          + srcE + " del helicoptero " + srcH + " a la expedición " + dstE + " del helicoptero " 
                          + dstH + " Coste(" + v + ") ---> "+ newState.toString());
-                    retVal.add(new Successor(S, newState));
+                    retVal.add(new Successor("", newState));
                   }
                   // Move group dstG to expedition srcE if there is space
                   if (state.getExpeditions(srcH).get(srcE).size() < 3 && state.doesGroupFitInExp(srcH,srcE,dstH,dstE,dstG)) {
                     newState = new DesastresState((DesastresState)aState);
                     newState.moveGroupBetweenExpeditions(dstH, dstE, dstG, srcH, srcE);
                     double v = dhf.getHeuristicValue(newState);
-                    String S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + dstG + " de la expedición " 
+                    /*String S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + dstG + " de la expedición " 
                          + dstE + " del helicoptero " + dstH + " a la expedición " + srcE + " del helicoptero " 
-                         + srcH + " Coste(" + v + ") ---> "+ newState.toString());
-                    retVal.add(new Successor(S, newState));
+                         + srcH + " Coste(" + v + ") ---> "+ newState.toString());*/
+                    retVal.add(new Successor("", newState));
                   }
                 }
               }
