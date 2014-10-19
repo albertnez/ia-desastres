@@ -20,7 +20,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
     ArrayList retVal = new ArrayList();
     DesastresState state = (DesastresState) aState;
     DesastresHeuristicFunction dhf = new DesastresHeuristicFunction();
-
+    double current = dhf.getHeuristicValue(state);
     // Each gorup of three nested fors are for selecting each group
     // Averall complexity is O(n^2), where n is the number of groups
     for (int srcH = 0; srcH < state.getTotalHelicopters(); ++srcH) {
@@ -32,8 +32,8 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           double v = dhf.getHeuristicValue(newState);
           String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                     + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
-                     + " Coste(" + v + ") ---> " + newState.toString());
+                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
 
           //Now the other swap
@@ -44,8 +44,8 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           v = dhf.getHeuristicValue(newState);
           S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                     + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
-                     + " Coste(" + v + ") ---> " + newState.toString());
+                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
         }
         for (int srcG = 0; srcG < state.getExpeditions(srcH).get(srcE).size(); ++srcG) {
@@ -58,8 +58,8 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
               newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
               double v = dhf.getHeuristicValue(newState);
               String S = new String(DesastresState.CREAR_EXPEDICION + srcG + " de la expedición " 
-                         + srcE + " del helicoptero " + srcH + " a una nueva expedición del helicoptero " 
-                         + dstH + " Coste(" + v + ") ---> " + newState.toString());
+                        + srcE + " del helicoptero " + srcH + " a una nueva expedición del helicoptero " 
+                        + dstH + " Coste(" + v + ") ---> " + newState.toString());
               retVal.add(new Successor(S, newState));
             }
             for (int dstE = 0; dstE < state.getNumExpeditionsHeli(dstH); ++dstE) {
@@ -71,7 +71,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                   if (state.doesGroupFitInExp(dstH,dstE,srcH,srcE,srcG) && state.doesGroupFitInExp(srcH,srcE,dstH,dstE,dstG)){
                     newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
                     // aima stuff
-                    double v = dhf.getHeuristicValue(newState);
+                    double v = dhf.getHeuristicValue(newState);              
                     String S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
                            + srcE + " del helicoptero " + srcH + " con el grupo " + dstG + " de la expedición " 
                            + dstE + " del helicoptero " + dstH + " Coste(" + v + ") ---> "+ newState.toString());
@@ -82,10 +82,10 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                   if (state.getExpeditions(dstH).get(dstE).size() < 3 && state.doesGroupFitInExp(dstH,dstE,srcH,srcE,srcG)) {
                     newState = new DesastresState((DesastresState)aState);
                     newState.moveGroupBetweenExpeditions(srcH, srcE, srcG, dstH, dstE);
-                    double v = dhf.getHeuristicValue(newState);
+                    double v = dhf.getHeuristicValue(newState);                   
                     String S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + srcG + " de la expedición " 
-                         + srcE + " del helicoptero " + srcH + " a la expedición " + dstE + " del helicoptero " 
-                         + dstH + " Coste(" + v + ") ---> "+ newState.toString());
+                          + srcE + " del helicoptero " + srcH + " a la expedición " + dstE + " del helicoptero " 
+                          + dstH + " Coste(" + v + ") ---> "+ newState.toString());
                     retVal.add(new Successor(S, newState));
                   }
                   // Move group dstG to expedition srcE if there is space
@@ -94,8 +94,8 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                     newState.moveGroupBetweenExpeditions(dstH, dstE, dstG, srcH, srcE);
                     double v = dhf.getHeuristicValue(newState);
                     String S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + dstG + " de la expedición " 
-                         + dstE + " del helicoptero " + dstH + " a la expedición " + srcE + " del helicoptero " 
-                         + srcH + " Coste(" + v + ") ---> "+ newState.toString());
+                        + dstE + " del helicoptero " + dstH + " a la expedición " + srcE + " del helicoptero " 
+                        + srcH + " Coste(" + v + ") ---> "+ newState.toString());
                     retVal.add(new Successor(S, newState));
                   }
                 }

@@ -12,7 +12,12 @@ import aima.search.informed.SimulatedAnnealingSearch;
 
 public class DesastresMain {
   public static void main(String[] args){
-    DesastresState d = new DesastresState(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+    DesastresState d = new DesastresState(Integer.parseInt(args[0]), 
+                                          Integer.parseInt(args[1]), 
+                                          Integer.parseInt(args[2]), 
+                                          Integer.parseInt(args[3]),
+                                          Double.parseDouble(args[4]),
+                                          Integer.parseInt(args[5]));
     TSPHillClimbingSearch(d);
     //TSPSimulatedAnnealingSearch(d);
   }

@@ -29,6 +29,7 @@ public class DesastresState {
   private static int maximumHelicopterCapacity;
   // Helicopters containing the expeditions. For each helicopters, priority 1 expeditions
   // will appear before priority 2 expeditions.
+  private static double heuristicWeight;
   private ArrayList< ArrayList< ArrayList<Grupo> > > helicopters;
   // Time when last priority 1 groups is rescued in each helicopter
   private double[] typeBCostHelicopters;
@@ -59,20 +60,14 @@ public class DesastresState {
       typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[i]);
     }
   }
-
-  /*!\brief Generates an instance of Desastres problem with an initial solution
-   *
-   * Creates a new instance of the problem with nc centers, nh helicopters and ng groups
+  /*\! brief Creates a new instance of the problem with nc centers, nh helicopters and ng groups
    * with an initial solution which consists of expeditions of 1 group each, and each expedition
    * being executed by one different helicopter chosen in the order they appear
-   * 
-   * @param [in] nc Number of centers
-   * @param [in] nh Number of helicopters
-   * @param [in] ng Number of groups
+   * @param [in] nc int Number of centers
+   * @param [in] nh int Helicopters per center.
+   * @param [in] ng int Number of groups
    */
-  public DesastresState(int nc, int nh, int ng, int seed) {
-    centers = new Centros(nc, nh, seed);
-    groups = new Grupos(ng, seed);
+  void initialSolutionByOrder(int nc, int nh, int ng) {
     helicopterSpeed = 100.0/60.0;
     maximumHelicopterCapacity = 15;
     ncenters = nc;
@@ -117,6 +112,101 @@ public class DesastresState {
       }
       ind = (ind + 1)%(nhelicopterspercenter*ncenters);
     }
+  }
+  /*\! brief Assigns each group to a random helicopter.
+   *  @param [in] nc Number of centers.
+   *  @param [in] nh Helicopters per center.
+   *  @param [in  ng Number of groups.
+   */
+  void initialSolutionRandom(int nc, int nh, int ng) {
+        helicopterSpeed = 100.0/60.0;
+        maximumHelicopterCapacity = 15;
+        ncenters = nc;
+        nhelicopterspercenter = nh;
+        ngroups = ng;
+        typeBCostHelicopters = new double[nhelicopterspercenter * ncenters];
+        for(int i=0; i<typeBCostHelicopters.length; ++i)
+            typeBCostHelicopters[i] = 0.0;
+        typeASolutionCost = 0.0;
+        typeBSolutionCost = 0.0;
+        numberHelisWithExps = 0;
+        // Assign each expedition to one helicopter
+        helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh*nc);
+        while (helicopters.size() < nh*nc) {
+            helicopters.add(new ArrayList<ArrayList<Grupo>>());
+        }
+        Random random = new Random();
+        
+        // Assign the centers of each helicopter helicoptersCenters
+        helicoptersCenter = new Centro[nh*nc]; 
+        int ind = 0;
+        for (Centro c : centers) {
+            for (int i = 0; i < c.getNHelicopteros(); ++i) {
+                helicoptersCenter[ind] = c;
+                ++ind;
+            }
+        }
+        
+//           public boolean doesGroupFitInExp (int dstH, int dstE, int srcH, int srcE , int g) {
+        //a cada grup li assignem un centre random i intentem ficar-lo a l'ultima expedicio ja existent.
+        for(Grupo g : groups) {
+            int helicopterForG = Math.abs(random.nextInt()) % helicopters.size();
+            int cap = g.getNPersonas();
+            Centro c = getCenter(helicopterForG);
+            boolean ok = false;
+            if(helicopters.get(helicopterForG).size()==0) ++numberHelisWithExps;
+            for(int i=0; i<helicopters.get(helicopterForG).size() && !ok; ++i) {
+                int sum = 0;
+                if(helicopters.get(helicopterForG).get(i).size()==3) continue;
+                boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
+                for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j)
+                    sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
+                if(sum+cap <= 15) {
+                    ok = true;
+                    double oldCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+                    typeASolutionCost -= oldCost;
+                    if(isHighExp) {
+                        typeBCostHelicopters[helicopterForG] -= oldCost;
+                    }
+                    helicopters.get(helicopterForG).get(i).add(g);
+                    double newCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+                    typeASolutionCost += newCost;
+                    
+                    if(isHighExp || g.getPrioridad()==1) {
+                        typeBCostHelicopters[helicopterForG] += newCost;
+                        typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+                    } 
+                }
+            }
+            
+            if(!ok) {
+                ArrayList< Grupo > n = new ArrayList< Grupo >();
+                n.add(g);
+                double cost = getTripCost(c, n);
+                typeASolutionCost += cost;
+                helicopters.get(helicopterForG).add(n);
+                if(expIsHighPriority(n)) {
+                    typeBCostHelicopters[helicopterForG] += cost;
+                    typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+                }
+            } 
+        }
+    }
+  
+  /*!\brief Generates an instance of Desastres problem with an initial solution.
+   * 
+   * @param [in] nc Number of centers
+   * @param [in] nh Number of helicopters
+   * @param [in] ng Number of groups
+   * @param [in] seed Random seed.
+   * @param [in] type of initial solution (1=by order of input, 2=random).
+   */
+  public DesastresState(int nc, int nh, int ng, int seed, double weight, int solution) {
+    heuristicWeight = weight;
+    centers = new Centros(nc, nh, seed);
+    groups = new Grupos(ng, seed);
+    if(solution==1) initialSolutionByOrder(nc, nh, ng);
+    else if(solution==2) initialSolutionRandom(nc, nh, ng);
   }
 
   /*!\brief Copy constructor
@@ -389,13 +479,13 @@ public class DesastresState {
     // Substract typeBCost as they have to be recalculated
     if (expIsHighPriority(expeditionA)) is_urgentA = true;
     if (is_urgentA) {
-      if (typeBCostHelicopters[helicopterA] == typeBSolutionCost) updateTypeB = true;
+      if (Math.abs(typeBCostHelicopters[helicopterA] - typeBSolutionCost) < 1e-9) updateTypeB = true;
       typeBCostHelicopters[helicopterA] -= tripcostA;
     }
 
     if (expIsHighPriority(expeditionB)) is_urgentB = true;
     if (is_urgentB) {
-      if (typeBCostHelicopters[helicopterB] == typeBSolutionCost) updateTypeB = true;
+      if (Math.abs(typeBCostHelicopters[helicopterB] - typeBSolutionCost) < 1e-9) updateTypeB = true;
       typeBCostHelicopters[helicopterB] -= tripcostB;
     }
 
@@ -597,21 +687,22 @@ public class DesastresState {
   public String toString() {
     String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
+      retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordY() + ":\n";
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
-      if (heli.size() > 0) {
-        retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordY() + ":\n";
-        for (int j = 0; j < heli.size(); ++j){
-          ArrayList<Grupo> exp = heli.get(j);
-          if (exp.size() > 0){
-            retVal += "\tExpedición " + j + " del helicoptero recoje a los grupos:\n";
-            for (int k =0; k < exp.size(); ++k){
-              retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
-            }
-          }
+      for (int j = 0; j < heli.size(); ++j){
+        ArrayList<Grupo> exp = heli.get(j);
+        retVal += "\tExpedición " + j + " del helicoptero " + j + " recoje a los grupos:\n";
+        for (int k =0; k < exp.size(); ++k){
+          retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
         }
       }
     }
     return retVal;
   }
 
+  public static double getHeuristicWeight() {
+    return heuristicWeight;
+  }
+  
+  
 }
