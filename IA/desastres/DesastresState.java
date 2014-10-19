@@ -59,14 +59,15 @@ public class DesastresState {
       typeBSolutionCost = java.lang.Math.max(typeBSolutionCost, typeBCostHelicopters[i]);
     }
   }
+
   /*\! brief Creates a new instance of the problem with nc centers, nh helicopters and ng groups
    * with an initial solution which consists of expeditions of 1 group each, and each expedition
    * being executed by one different helicopter chosen in the order they appear
    * @param [in] nc int Number of centers
-   * @param [in] nh int Helicopters per center.
+   * @param [in] nh int Helicopters per center
    * @param [in] ng int Number of groups
    */
-  void initialSolutionByOrder(int nc, int nh, int ng) {
+  private void initialSolutionByOrder(int nc, int nh, int ng) {
     helicopterSpeed = 100.0/60.0;
     maximumHelicopterCapacity = 15;
     ncenters = nc;
@@ -106,91 +107,94 @@ public class DesastresState {
       double cost = getTripCost(helicoptersCenter[ind], expeditions.get(i));
       typeASolutionCost += cost;
       if (expIsHighPriority(expeditions.get(i))) {
-        typeBSolutionCost += cost;
+        typeBSolutionCost += cost;  //since 1 group per expedition, this is valid
         typeBCostHelicopters[ind] += cost;
       }
       ind = (ind + 1)%(nhelicopterspercenter*ncenters);
     }
   }
-  /*\! brief Assigns each group to a random helicopter.
-   *  @param [in] nc Number of centers.
-   *  @param [in] nh Helicopters per center.
-   *  @param [in  ng Number of groups.
+
+  /*\! brief Assigns each group to a random helicopter
+   *  @param [in] nc Number of centers
+   *  @param [in] nh Helicopters per center
+   *  @param [in] ng Number of groups
    */
-  void initialSolutionRandom(int nc, int nh, int ng) {
-        helicopterSpeed = 100.0/60.0;
-        maximumHelicopterCapacity = 15;
-        ncenters = nc;
-        nhelicopterspercenter = nh;
-        ngroups = ng;
-        typeBCostHelicopters = new double[nhelicopterspercenter * ncenters];
-        for(int i=0; i<typeBCostHelicopters.length; ++i)
-            typeBCostHelicopters[i] = 0.0;
-        typeASolutionCost = 0.0;
-        typeBSolutionCost = 0.0;
-        numberHelisWithExps = 0;
-        // Assign each expedition to one helicopter
-        helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh*nc);
-        while (helicopters.size() < nh*nc) {
-            helicopters.add(new ArrayList<ArrayList<Grupo>>());
-        }
-        Random random = new Random();
-        
-        // Assign the centers of each helicopter helicoptersCenters
-        helicoptersCenter = new Centro[nh*nc]; 
-        int ind = 0;
-        for (Centro c : centers) {
-            for (int i = 0; i < c.getNHelicopteros(); ++i) {
-                helicoptersCenter[ind] = c;
-                ++ind;
-            }
-        }
-        
-        //public boolean doesGroupFitInExp (int dstH, int dstE, int srcH, int srcE , int g) {
-        //a cada grup li assignem un centre random i intentem ficar-lo a l'ultima expedicio ja existent.
-        for(Grupo g : groups) {
-            int helicopterForG = Math.abs(random.nextInt()) % helicopters.size();
-            int cap = g.getNPersonas();
-            Centro c = getCenter(helicopterForG);
-            boolean ok = false;
-            if(helicopters.get(helicopterForG).size()==0) ++numberHelisWithExps;
-            for(int i=0; i<helicopters.get(helicopterForG).size() && !ok; ++i) {
-                int sum = 0;
-                if(helicopters.get(helicopterForG).get(i).size()==3) continue;
-                boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
-                for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j)
-                    sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
-                if(sum+cap <= 15) {
-                    ok = true;
-                    double oldCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
-                    typeASolutionCost -= oldCost;
-                    if(isHighExp) {
-                        typeBCostHelicopters[helicopterForG] -= oldCost;
-                    }
-                    helicopters.get(helicopterForG).get(i).add(g);
-                    double newCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
-                    typeASolutionCost += newCost;
-                    
-                    if(isHighExp || g.getPrioridad()==1) {
-                        typeBCostHelicopters[helicopterForG] += newCost;
-                        typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
-                    } 
-                }
-            }
-            
-            if(!ok) {
-                ArrayList< Grupo > n = new ArrayList< Grupo >();
-                n.add(g);
-                double cost = getTripCost(c, n);
-                typeASolutionCost += cost;
-                helicopters.get(helicopterForG).add(n);
-                if(expIsHighPriority(n)) {
-                    typeBCostHelicopters[helicopterForG] += cost;
-                    typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
-                }
-            } 
-        }
+  private void initialSolutionRandom(int nc, int nh, int ng) {
+    helicopterSpeed = 100.0/60.0;
+    maximumHelicopterCapacity = 15;
+    ncenters = nc;
+    nhelicopterspercenter = nh;
+    ngroups = ng;
+    typeBCostHelicopters = new double[nhelicopterspercenter * ncenters];
+
+    for(int i=0; i<typeBCostHelicopters.length; ++i)
+      typeBCostHelicopters[i] = 0.0;
+
+    typeASolutionCost = 0.0;
+    typeBSolutionCost = 0.0;
+    numberHelisWithExps = 0;
+    // Assign each expedition to one helicopter
+    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh*nc);
+    while (helicopters.size() < nh*nc) {
+      helicopters.add(new ArrayList<ArrayList<Grupo>>());
     }
+    Random random = new Random();
+    
+    // Assign the centers of each helicopter helicoptersCenters
+    helicoptersCenter = new Centro[nh*nc]; 
+    int ind = 0;
+    for (Centro c : centers) {
+      for (int i = 0; i < c.getNHelicopteros(); ++i) {
+        helicoptersCenter[ind] = c;
+        ++ind;
+      }
+    }
+    
+    //a cada grup li assignem un centre random i intentem ficar-lo a l'ultima expedicio ja existent.
+    for(Grupo g : groups) {
+      int helicopterForG = Math.abs(random.nextInt()) % helicopters.size();
+      int cap = g.getNPersonas();
+      Centro c = getCenter(helicopterForG);
+      boolean ok = false;
+      if(helicopters.get(helicopterForG).size()==0) ++numberHelisWithExps;
+      for(int i=0; i<helicopters.get(helicopterForG).size() && !ok; ++i) {
+        int sum = 0;
+        if(helicopters.get(helicopterForG).get(i).size()==3) continue;
+        boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
+        for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j) {
+          sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
+          if(sum+cap <= 15) {
+            ok = true;
+            double oldCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+            typeASolutionCost -= oldCost;
+            if(isHighExp) {
+              typeBCostHelicopters[helicopterForG] -= oldCost;
+            }
+            helicopters.get(helicopterForG).get(i).add(g);
+            double newCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+            typeASolutionCost += newCost;
+            
+            if(isHighExp || g.getPrioridad()==1) {
+              typeBCostHelicopters[helicopterForG] += newCost;
+              typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+            } 
+          }
+        }
+      }
+          
+      if(!ok) {
+        ArrayList< Grupo > n = new ArrayList< Grupo >();
+        n.add(g);
+        double cost = getTripCost(c, n);
+        typeASolutionCost += cost;
+        helicopters.get(helicopterForG).add(n);
+        if(expIsHighPriority(n)) {
+          typeBCostHelicopters[helicopterForG] += cost;
+          typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+        }
+      } 
+    }
+  }
   
   /*!\brief Generates an instance of Desastres problem with an initial solution.
    * 
@@ -198,7 +202,7 @@ public class DesastresState {
    * @param [in] nh Number of helicopters
    * @param [in] ng Number of groups
    * @param [in] seed Random seed.
-   * @param [in] type of initial solution (1=by order of input, 2=random).
+   * @param [in] solution type of initial solution (1=one group per helicopter, 2=random).
    */
   public DesastresState(int nc, int nh, int ng, int seed, int solution) {
     centers = new Centros(nc, nh, seed);
@@ -377,7 +381,7 @@ public class DesastresState {
     for (int i =0; i < helicopters.get(dstH).get(dstE).size(); ++i){
       sum += helicopters.get(dstH).get(dstE).get(i).getNPersonas();
     }
-    return (15 <= sum + helicopters.get(srcH).get(srcE).get(g).getNPersonas());
+    return (maximumHelicopterCapacity <= sum + helicopters.get(srcH).get(srcE).get(g).getNPersonas());
   }
   
   /*!\brief Returns the time (in minutes) that would take to rescue all groups in an expedition
@@ -403,46 +407,6 @@ public class DesastresState {
     ret += getDistBetweenCenterGroup(c, expedition.get(expedition.size()-1))/helicopterSpeed;
     //we must add additional waiting minutes
     return ret + 10.0;
-  }
-  
-  /*!\brief Rearranges an expedition, minimizing the trip cost it would have if rescued from a given center.
-   *
-   * @param [in] c Centro
-   * @param [in] g Grupo
-   */
-  public void rearrangeExpeditionToOptimumTrip(Centro c, ArrayList<Grupo> expedition) {
-    if(expedition.size()==1) return; // n=1 -> We'll always have the optimum arrangement.
-    double currentCost = getTripCost(c, expedition);
-    if(expedition.size()==2) { //n=2 -> We need to check the original and inverse order
-      ArrayList<Grupo> test = new ArrayList<>();
-      test.add(expedition.get(1));
-      test.add(expedition.get(0));
-      double theOtherCost = getTripCost(c, test);
-      if(theOtherCost<currentCost) expedition =  new ArrayList<Grupo>(test);
-    }
-    else if(expedition.size()==3) { //n=3 -> We need to check 3! = 6 possible arrangements
-      for(int i=0; i<expedition.size(); ++i) {
-        for(int j=0; j<expedition.size(); ++j) {
-          if(i!=j) 
-            for(int k=0; k<expedition.size(); ++k) {
-              if(j!=k && i!=k) {
-                ArrayList<Grupo> test = new ArrayList<>();
-                test.add(expedition.get(i));
-                test.add(expedition.get(j));
-                test.add(expedition.get(k));
-                double theOtherCost = getTripCost(c, test);
-                if(theOtherCost<currentCost) {
-                    currentCost = theOtherCost;
-                    //expedition = new ArrayList<Grupo>(test);
-                    for (int ind = 0; ind < expedition.size(); ++ind) {
-                      expedition.set(ind, test.get(ind));
-                    }
-                }
-              }
-            }
-        }
-      }
-    }
   }
 
   /*\!brief Swaps two groups between their expeditions and readjusts the solution cost.
