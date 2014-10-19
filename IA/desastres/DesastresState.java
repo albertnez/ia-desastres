@@ -38,6 +38,8 @@ public class DesastresState {
   private double typeBSolutionCost;
   //Number of helicopters that have at least one expedition.
   private int numberHelisWithExps;
+  //constant of the weight
+  private static double heuristicWeight;
 
   /*!\brief Returns true if the expedition contains a priority 1 group.
    *
@@ -146,7 +148,7 @@ public class DesastresState {
             }
         }
         
-//           public boolean doesGroupFitInExp (int dstH, int dstE, int srcH, int srcE , int g) {
+        //public boolean doesGroupFitInExp (int dstH, int dstE, int srcH, int srcE , int g) {
         //a cada grup li assignem un centre random i intentem ficar-lo a l'ultima expedicio ja existent.
         for(Grupo g : groups) {
             int helicopterForG = Math.abs(random.nextInt()) % helicopters.size();
@@ -685,13 +687,17 @@ public class DesastresState {
   public String toString() {
     String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
-      retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordY() + ":\n";
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
-      for (int j = 0; j < heli.size(); ++j){
-        ArrayList<Grupo> exp = heli.get(j);
-        retVal += "\tExpedición " + j + " del helicoptero " + j + " recoje a los grupos:\n";
-        for (int k =0; k < exp.size(); ++k){
-          retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
+      if (heli.size() > 0) {
+        retVal += "Helicoptero " + i + " pertenece al centro en " + helicoptersCenter[i].getCoordX() + " " + helicoptersCenter[i].getCoordY() + ":\n";
+        for (int j = 0; j < heli.size(); ++j){
+          ArrayList<Grupo> exp = heli.get(j);
+          if (exp.size() > 0){
+            retVal += "\tExpedición " + j + " del helicoptero recoje a los grupos:\n";
+            for (int k =0; k < exp.size(); ++k){
+              retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
+            }
+          }
         }
       }
     }
