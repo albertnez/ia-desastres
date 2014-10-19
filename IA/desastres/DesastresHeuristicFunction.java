@@ -4,6 +4,12 @@ import aima.search.framework.HeuristicFunction;
 
 public class DesastresHeuristicFunction implements HeuristicFunction {
 
+  private static double heuristicWeight;
+
+  public static void setHeuristicWeight(double w) {
+    heuristicWeight = w;
+  }
+  
  /*!\brief Gets the heuristic value that corresponds to the state state
   *
   * The heuristic function tries to minimize the SUM of the time 
@@ -17,7 +23,7 @@ public class DesastresHeuristicFunction implements HeuristicFunction {
   */
   public double getHeuristicValue(Object state) {
     DesastresState st = (DesastresState)state;
-    return (st.getTypeASolutionCost()*DesastresState.getHeuristicWeight()) + (st.getTypeBSolutionCost()*(1.0-DesastresState.getHeuristicWeight()));
+    return (st.getTypeASolutionCost()*heuristicWeight) + (st.getTypeBSolutionCost()*(1.0-heuristicWeight));
   }
 
 }

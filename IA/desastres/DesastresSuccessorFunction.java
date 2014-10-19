@@ -20,7 +20,6 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
     ArrayList retVal = new ArrayList();
     DesastresState state = (DesastresState) aState;
     DesastresHeuristicFunction dhf = new DesastresHeuristicFunction();
-    double current = dhf.getHeuristicValue(state);
     // Each gorup of three nested fors are for selecting each group
     // Averall complexity is O(n^2), where n is the number of groups
     for (int srcH = 0; srcH < state.getTotalHelicopters(); ++srcH) {

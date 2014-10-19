@@ -29,7 +29,6 @@ public class DesastresState {
   private static int maximumHelicopterCapacity;
   // Helicopters containing the expeditions. For each helicopters, priority 1 expeditions
   // will appear before priority 2 expeditions.
-  private static double heuristicWeight;
   private ArrayList< ArrayList< ArrayList<Grupo> > > helicopters;
   // Time when last priority 1 groups is rescued in each helicopter
   private double[] typeBCostHelicopters;
@@ -201,8 +200,7 @@ public class DesastresState {
    * @param [in] seed Random seed.
    * @param [in] type of initial solution (1=by order of input, 2=random).
    */
-  public DesastresState(int nc, int nh, int ng, int seed, double weight, int solution) {
-    heuristicWeight = weight;
+  public DesastresState(int nc, int nh, int ng, int seed, int solution) {
     centers = new Centros(nc, nh, seed);
     groups = new Grupos(ng, seed);
     if(solution==1) initialSolutionByOrder(nc, nh, ng);
@@ -699,10 +697,5 @@ public class DesastresState {
     }
     return retVal;
   }
-
-  public static double getHeuristicWeight() {
-    return heuristicWeight;
-  }
-  
   
 }
