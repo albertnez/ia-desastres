@@ -499,9 +499,12 @@ public class DesastresState {
     double newCost = getTripCost(center, expedition);
     typeASolutionCost += newCost;
     if(expIsHighPriority(expedition)) {
+        boolean update = false;
+        if (Math.abs(typeBSolutionCost - typeBCostHelicopters[srcH]) < 1e-9) 
+            update = true;
         typeBCostHelicopters[srcH] -= oldCost;
         typeBCostHelicopters[srcH] += newCost;
-        updateTypeBSolutionCost();
+        if (update) updateTypeBSolutionCost();
     }
     
   }
@@ -647,6 +650,8 @@ public class DesastresState {
    *
    */
   public String toString() {
+    return "";
+  /*
     String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
@@ -664,6 +669,7 @@ public class DesastresState {
       }
     }
     return retVal;
+    */
   }
   
 }

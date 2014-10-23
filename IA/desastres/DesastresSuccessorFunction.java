@@ -37,7 +37,8 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
 
           //Now the other swap
           // Undo swap...
-          newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
+          newState = new DesastresState((DesastresState)aState);
+          //newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           // New swap
           groupA = 2;
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
