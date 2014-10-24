@@ -218,77 +218,77 @@ public class DesastresState {
     // Assign each expedition to one helicopter
     helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh*nc);
     while (helicopters.size() < nh*nc) {
-    helicopters.add(new ArrayList<ArrayList<Grupo>>());
+      helicopters.add(new ArrayList<ArrayList<Grupo>>());
     }
     
     // Assign the centers of each helicopter helicoptersCenters
     helicoptersCenter = new Centro[nh*nc];
     int ind = 0;
     for (Centro c : centers) {
-        for (int i = 0; i < c.getNHelicopteros(); ++i) {
-            helicoptersCenter[ind] = c;
-            ++ind;
-        }
+      for (int i = 0; i < c.getNHelicopteros(); ++i) {
+        helicoptersCenter[ind] = c;
+        ++ind;
+      }
     }
     
     for(Grupo g : groups) {
-        double nearest = 1e40;
-        Centro cn = centers.get(0);
-        for(int i=0; i<centers.size(); ++i) {
-            double d = getDistBetweenCenterGroup(centers.get(i), g);
-            if(d<nearest) {
-                nearest = d;
-                cn = centers.get(i);
-            }
+      double nearest = getDistBetweenCenterGroup(centers.get(0), g);
+      Centro cn = centers.get(0);
+      for(int i=1; i<centers.size(); ++i) {
+        double d = getDistBetweenCenterGroup(centers.get(i), g);
+        if(d<nearest) {
+          nearest = d;
+          cn = centers.get(i);
         }
-        ArrayList<Integer> hels = new ArrayList<Integer>();
-        for(int i=0; i<helicoptersCenter.length; ++i) {
-            if(helicoptersCenter[i]==cn)
-                hels.add(i);
+      }
+      ArrayList<Integer> hels = new ArrayList<Integer>();
+      for(int i=0; i<helicoptersCenter.length; ++i) {
+        if(helicoptersCenter[i]==cn)
+          hels.add(i);
+      }
+      Random random = new Random();
+      int helicopterForG = hels.get(Math.abs(random.nextInt()) % hels.size());
+      int cap = g.getNPersonas();
+      Centro c = getCenter(helicopterForG);
+      boolean ok = false;
+      if(helicopters.get(helicopterForG).size()==0) ++numberHelisWithExps;
+      for(int i=0; i<helicopters.get(helicopterForG).size() && !ok; ++i) {
+        int sum = 0;
+        if(helicopters.get(helicopterForG).get(i).size()==3) continue;
+        boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
+        for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j)
+          sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
+        if(sum+cap <= 15) {
+          ok = true;
+          double oldCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+          typeASolutionCost -= oldCost;
+          if(isHighExp) {
+            typeBCostHelicopters[helicopterForG] -= oldCost;
+          }
+          helicopters.get(helicopterForG).get(i).add(g);
+          double newCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+          typeASolutionCost += newCost;
+          
+          if(isHighExp || g.getPrioridad()==1) {
+            typeBCostHelicopters[helicopterForG] += newCost;
+            typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+          } 
         }
-        Random random = new Random();
-        int helicopterForG = hels.get(Math.abs(random.nextInt()) % hels.size());
-        int cap = g.getNPersonas();
-        Centro c = getCenter(helicopterForG);
-        boolean ok = false;
-        if(helicopters.get(helicopterForG).size()==0) ++numberHelisWithExps;
-        for(int i=0; i<helicopters.get(helicopterForG).size() && !ok; ++i) {
-            int sum = 0;
-            if(helicopters.get(helicopterForG).get(i).size()==3) continue;
-            boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
-            for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j)
-                sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
-            if(sum+cap <= 15) {
-                ok = true;
-                double oldCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
-                typeASolutionCost -= oldCost;
-                if(isHighExp) {
-                    typeBCostHelicopters[helicopterForG] -= oldCost;
-                }
-                helicopters.get(helicopterForG).get(i).add(g);
-                double newCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
-                typeASolutionCost += newCost;
-                
-                if(isHighExp || g.getPrioridad()==1) {
-                    typeBCostHelicopters[helicopterForG] += newCost;
-                typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
-                } 
-            }
-    }
+      }
         
-        if(!ok) {
-            ArrayList< Grupo > n = new ArrayList< Grupo >();
-            n.add(g);
-            double cost = getTripCost(c, n);
-            typeASolutionCost += cost;
-            helicopters.get(helicopterForG).add(n);
-            if(expIsHighPriority(n)) {
-                typeBCostHelicopters[helicopterForG] += cost;
-                typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
-            }
+      if(!ok) {
+        ArrayList< Grupo > n = new ArrayList< Grupo >();
+        n.add(g);
+        double cost = getTripCost(c, n);
+        typeASolutionCost += cost;
+        helicopters.get(helicopterForG).add(n);
+        if(expIsHighPriority(n)) {
+          typeBCostHelicopters[helicopterForG] += cost;
+          typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
         }
+      }
     }
-}
+  }
   
   /*!\brief Generates an instance of Desastres problem with an initial solution.
    * 
