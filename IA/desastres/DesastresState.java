@@ -161,7 +161,7 @@ public class DesastresState {
         int sum = 0;
         if(helicopters.get(helicopterForG).get(i).size()==3) continue;
         boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
-        for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j)
+        for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j) {
           sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
           if(sum+cap <= 15) {
             ok = true;
@@ -179,6 +179,7 @@ public class DesastresState {
               typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
             } 
           }
+        }
       }
           
       if(!ok) {
