@@ -745,8 +745,9 @@ public class DesastresState {
    *
    */
   public String toString() {
-     return "";
-    /*String retVal = "\n";
+    return "";
+    /*
+    String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
       if (heli.size() > 0) {
@@ -762,7 +763,8 @@ public class DesastresState {
         }
       }
     }
-    return retVal;*/
+    return retVal;
+    */
   }
   
 }

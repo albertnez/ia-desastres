@@ -31,7 +31,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           double v = dhf.getHeuristicValue(newState);
           String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + srcE + " del helicoptero " + srcH + " con grupo " + groupB 
                     + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
 
@@ -44,7 +44,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           v = dhf.getHeuristicValue(newState);
           S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + srcE + " del helicoptero " + srcH + " con grupo " + groupB 
                     + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
         }
@@ -53,7 +53,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           for (int dstH = srcH; dstH < state.getTotalHelicopters(); ++dstH) {
             // Move each group 'srcG' to helicopter dstH.
             // If helicopters are diferent, or group 'srcG' is from an expedition of size 2 or more, split
-            if (srcH != dstH || state.getExpeditions(srcH).get(srcE).size() > 1) {
+            if (srcH != dstH) {
               DesastresState newState = new DesastresState((DesastresState)aState);
               newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
               double v = dhf.getHeuristicValue(newState);
