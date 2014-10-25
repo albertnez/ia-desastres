@@ -53,7 +53,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           for (int dstH = srcH; dstH < state.getTotalHelicopters(); ++dstH) {
             // Move each group 'srcG' to helicopter dstH.
             // If helicopters are diferent, or group 'srcG' is from an expedition of size 2 or more, split
-            if (srcH != dstH) {
+            if (srcH != dstH || state.getExpeditions(srcH).get(srcE).size() > 1) {
               DesastresState newState = new DesastresState((DesastresState)aState);
               newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
               double v = dhf.getHeuristicValue(newState);
