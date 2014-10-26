@@ -384,6 +384,31 @@ public class DesastresState {
     return (maximumHelicopterCapacity <= sum + helicopters.get(srcH).get(srcE).get(g).getNPersonas());
   }
   
+  /*!\brief Returns true if the helicopter has an expedition with three groups
+   *
+   * @param [in] srcH the helicopter
+   * @return boolean that indicates if the condition is true 
+   */
+  public boolean heliHasExpeditionWithThreeGroups (int srcH) {
+    for (int i = 0; i < helicopters.get(srcH).size(); ++i) {
+      if (helicopters.get(srcH).get(i).size() == 3) return true;
+    }
+    return false;
+  }
+
+  /*!\brief Returns true there is an expedition with three groups
+   *
+   * @return boolean that indicates if the condition is true 
+   */
+  public boolean existsExpeditionWithThreeGroups () {
+    for (int h = 0; h < helicopters.size(); ++h) {
+      for (int e = 0; e < helicopters.get(h).size(); ++e) {
+        if (helicopters.get(h).get(e).size() == 3) return true;
+      }
+    }
+    return false;
+  }
+
   /*!\brief Returns the time (in minutes) that would take to rescue all groups in an expedition
    *  if they are rescued in the given order and from a given center.
    *

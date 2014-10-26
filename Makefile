@@ -13,7 +13,8 @@ CLASSES = \
 		$(SRCPATH)/DesastresHeuristicFunction.java \
 		$(SRCPATH)/DesastresMain.java \
 		$(SRCPATH)/DesastresState.java \
-		$(SRCPATH)/DesastresSuccessorFunction.java
+		$(SRCPATH)/DesastresSuccessorFunction.java \
+		$(SRCPATH)/DesastresSuccessorFunctionSA.java
 
 default: classes
 
