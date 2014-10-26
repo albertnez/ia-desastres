@@ -68,7 +68,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                   // SWAP, only possible if the expedition has room for the group
                   DesastresState newState = new DesastresState((DesastresState)aState);
 
-                  if (state.doesGroupFitInExp(dstH,dstE,srcH,srcE,srcG) && state.doesGroupFitInExp(srcH,srcE,dstH,dstE,dstG)){
+                  if (state.isGroupsSwapValid(srcH, srcE, srcG, dstH, dstE, dstG)) {
                     newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
                     // aima stuff
                     double v = dhf.getHeuristicValue(newState);              

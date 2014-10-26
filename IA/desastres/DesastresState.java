@@ -478,6 +478,33 @@ public class DesastresState {
     }
     return (maximumHelicopterCapacity <= sum + helicopters.get(srcH).get(srcE).get(g).getNPersonas());
   }
+
+  /*!\brief Returns true if the swap of swaps between expeditions is valid
+   *
+   * @param [in] srcH source helicopter
+   * @param [in] srcE source expedition
+   * @param [in] srcH source group
+   * @param [in] dstH dest helicopter
+   * @param [in] dstE dest expedition
+   * @param [in] dstG dest Group
+   * @return boolean that indicates if the condition is true 
+   */
+  public boolean isGroupsSwapValid (int srcH, int srcE, int srcG, int dstH, int dstE, int dstG) {
+    // Can't be the same expedition
+    if (srcH == dstH && srcE == dstE) return false;
+    int srcGroupCapacity = helicopters.get(srcH).get(srcE).get(srcG).getNPersonas();
+    int dstGroupCapacity = helicopters.get(dstH).get(dstE).get(dstG).getNPersonas();
+    int srcExpeditionCapacity = 0, dstExpeditionCapacity = 0;
+    for (int i =0; i < helicopters.get(srcH).get(srcE).size(); ++i){
+      srcExpeditionCapacity += helicopters.get(srcH).get(srcE).get(i).getNPersonas();
+    }
+    for (int i =0; i < helicopters.get(dstH).get(dstE).size(); ++i){
+      dstExpeditionCapacity += helicopters.get(dstH).get(dstE).get(i).getNPersonas();
+    }
+
+    return (srcExpeditionCapacity - srcGroupCapacity + dstGroupCapacity <= maximumHelicopterCapacity &&
+            dstExpeditionCapacity - dstGroupCapacity + srcGroupCapacity <= maximumHelicopterCapacity);
+  }
   
   /*!\brief Returns true if the helicopter has an expedition with three groups
    *

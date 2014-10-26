@@ -60,8 +60,7 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
 
           dstE = rand.nextInt(state.getNumExpeditionsHeli(dstH));
           dstG = rand.nextInt(state.getExpeditions(dstH).get(dstE).size());
-
-        } while (dstH == srcH && dstE == srcE && dstG == srcG);
+        } while (!state.isGroupsSwapValid(srcH, srcE, srcG, dstH, dstE, dstG));
 
         newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
         v = dhf.getHeuristicValue(newState);

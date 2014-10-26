@@ -18,8 +18,8 @@ public class DesastresMain {
                                           Integer.parseInt(args[3]),
                                           Integer.parseInt(args[5]));
     DesastresHeuristicFunction.setHeuristicWeight(Double.parseDouble(args[4]));
-    //TSPHillClimbingSearch(d);
-    TSPSimulatedAnnealingSearch(d);
+    TSPHillClimbingSearch(d);
+    //TSPSimulatedAnnealingSearch(d);
   }
       
   private static void TSPHillClimbingSearch(DesastresState d) {
