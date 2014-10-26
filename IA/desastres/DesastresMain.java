@@ -18,8 +18,8 @@ public class DesastresMain {
                                           Integer.parseInt(args[3]),
                                           Integer.parseInt(args[5]));
     DesastresHeuristicFunction.setHeuristicWeight(Double.parseDouble(args[4]));
-    TSPHillClimbingSearch(d);
-    //TSPSimulatedAnnealingSearch(d);
+    //TSPHillClimbingSearch(d);
+    TSPSimulatedAnnealingSearch(d);
   }
       
   private static void TSPHillClimbingSearch(DesastresState d) {
@@ -41,12 +41,16 @@ public class DesastresMain {
     System.out.println("\nTSP Simulated Annealing  -->");
     try {
       Problem problem =  new Problem(d,new DesastresSuccessorFunctionSA(), new DesastresGoalTest(),new DesastresHeuristicFunction());
+      // Parameters are: [maxNumIterations, numIterationsInEachTemperatureStep, k, lambda]
+      // K is how long does it take for temperature to start decreasing
+      // lambda is how fast the function decreases
       SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
       //search.traceOn();
       SearchAgent agent = new SearchAgent(problem,search);
       
       System.out.println();
-      printActions(agent.getActions());
+      // AIMA IS BROKEN
+      //printActions(agent.getActions());
       printInstrumentation(agent.getInstrumentation());
     } catch (Exception e) {
       e.printStackTrace();

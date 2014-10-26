@@ -19,6 +19,7 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
   */
   public List getSuccessors(Object aState) {
     ArrayList retVal = new ArrayList();
+    //if (true) return retVal;
     DesastresState state = (DesastresState) aState;
     DesastresHeuristicFunction dhf = new DesastresHeuristicFunction();
 
