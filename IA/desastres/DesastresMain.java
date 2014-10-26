@@ -18,8 +18,8 @@ public class DesastresMain {
                                           Integer.parseInt(args[3]),
                                           Integer.parseInt(args[5]));
     DesastresHeuristicFunction.setHeuristicWeight(Double.parseDouble(args[4]));
-    TSPHillClimbingSearch(d);
-    //TSPSimulatedAnnealingSearch(d);
+    //TSPHillClimbingSearch(d);
+    TSPSimulatedAnnealingSearch(d);
   }
       
   private static void TSPHillClimbingSearch(DesastresState d) {
@@ -44,7 +44,11 @@ public class DesastresMain {
       // Parameters are: [maxNumIterations, numIterationsInEachTemperatureStep, k, lambda]
       // K is how long does it take for temperature to start decreasing
       // lambda is how fast the function decreases
-      SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
+      final int numIterations = 10000;
+      final int iterationsPerStep = 20;
+      final int K = 5;
+      final double lambda = 0.00001;
+      SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(numIterations, iterationsPerStep, K, lambda);
       //search.traceOn();
       SearchAgent agent = new SearchAgent(problem,search);
       
