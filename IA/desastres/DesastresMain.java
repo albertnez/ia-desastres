@@ -18,12 +18,12 @@ public class DesastresMain {
                                           Integer.parseInt(args[3]),
                                           Integer.parseInt(args[5]));
     DesastresHeuristicFunction.setHeuristicWeight(Double.parseDouble(args[4]));
-    //TSPHillClimbingSearch(d);
-    TSPSimulatedAnnealingSearch(d);
+    DesastresHillClimbingSearch(d);
+    DesastresSimulatedAnnealingSearch(d);
   }
       
-  private static void TSPHillClimbingSearch(DesastresState d) {
-    System.out.println("\nTSP HillClimbing  -->");
+  private static void DesastresHillClimbingSearch(DesastresState d) {
+    System.out.println("\nDesastres HillClimbing  -->");
     try {
       Problem problem =  new Problem(d,new DesastresSuccessorFunction(), new DesastresGoalTest(),new DesastresHeuristicFunction());
       Search search =  new HillClimbingSearch();
@@ -37,8 +37,8 @@ public class DesastresMain {
     }
   }
 
-  private static void TSPSimulatedAnnealingSearch(DesastresState d) {
-    System.out.println("\nTSP Simulated Annealing  -->");
+  private static void DesastresSimulatedAnnealingSearch(DesastresState d) {
+    System.out.println("\nDesastres Simulated Annealing  -->");
     try {
       Problem problem =  new Problem(d,new DesastresSuccessorFunctionSA(), new DesastresGoalTest(),new DesastresHeuristicFunction());
       // Parameters are: [maxNumIterations, numIterationsInEachTemperatureStep, k, lambda]

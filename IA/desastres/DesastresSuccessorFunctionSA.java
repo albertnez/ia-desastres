@@ -25,7 +25,6 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
 
     // Current cost:
     double v = dhf.getHeuristicValue(state);
-    System.out.println("Cost: " + v);
     // number of operators
     Random rand = new Random();
 
@@ -40,7 +39,7 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
     
     int srcH, srcE, srcG, dstH, dstE, dstG;
     srcH = srcE = srcG = dstH = dstE = dstG = -1;
-    String S;
+    String S = "";
     DesastresState newState = new DesastresState((DesastresState)aState);
     switch (options[rand.nextInt(numOptions)]) {
       case 0:
@@ -138,6 +137,7 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
         retVal.add(new Successor(S, newState));
         break;
     }
+    System.out.println(S);
     return retVal;
   }
 }
