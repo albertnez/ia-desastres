@@ -48,12 +48,12 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
         System.out.println("Inside swapGroupsBetweenExpeditions");
         // source helicopter
         do {
-          srcH = rand.nextInt(state.getTotalHelicopters());
-        } while (state.getNumExpeditionsHeli(srcH) == 0);
+          do {
+            srcH = rand.nextInt(state.getTotalHelicopters());
+          } while (state.getNumExpeditionsHeli(srcH) == 0);
 
-        srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
-        srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
-        do {
+          srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
+          srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
           do {
             dstH = rand.nextInt(state.getTotalHelicopters());
           } while (state.getNumExpeditionsHeli(dstH) == 0);
@@ -129,7 +129,9 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
         srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
         srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
 
-        dstH = rand.nextInt(state.getTotalHelicopters());  // any helicopter here will fit
+        do {
+          dstH = rand.nextInt(state.getTotalHelicopters());  // any helicopter here will fit
+        } while (state.getExpeditions(srcH).get(srcE).size() == 1 && dstH == srcH);
 
         newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
         v = dhf.getHeuristicValue(newState);
