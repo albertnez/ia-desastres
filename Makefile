@@ -14,7 +14,7 @@ CLASSES = \
 		$(SRCPATH)/DesastresMain.java \
 		$(SRCPATH)/DesastresState.java \
 		$(SRCPATH)/DesastresSuccessorFunction.java \
-		$(SRCPATH)/DesastresSuccessorFunctionSA.java
+		$(SRCPATH)/DesastresSuccessorFunctionSA.java \
 
 default: classes
 
