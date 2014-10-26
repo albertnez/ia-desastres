@@ -31,7 +31,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           double v = dhf.getHeuristicValue(newState);
           String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + srcE + " del helicoptero " + srcH + " con grupo " + groupB 
                     + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
 
@@ -44,7 +44,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           v = dhf.getHeuristicValue(newState);
           S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + srcE + " del helicoptero " + srcH + " con grupo " + groupB 
                     + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
         }

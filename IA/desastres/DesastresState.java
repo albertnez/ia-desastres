@@ -195,6 +195,100 @@ public class DesastresState {
       } 
     }
   }
+  /*!\brief Generates an initial solution where each group is assigned to
+   * an helicopter from its nearest center.
+   * @param [in] nc int 
+   * @param [in] nh int
+   * @param [in] ng int
+   */
+  private void initialSolutionNearestCenter(int nc, int nh, int ng) {
+    helicopterSpeed = 100.0/60.0;
+    maximumHelicopterCapacity = 15;
+    ncenters = nc;
+    nhelicopterspercenter = nh;
+    ngroups = ng;
+    typeBCostHelicopters = new double[nhelicopterspercenter * ncenters];
+
+    for(int i=0; i<typeBCostHelicopters.length; ++i)
+    typeBCostHelicopters[i] = 0.0;
+
+    typeASolutionCost = 0.0;
+    typeBSolutionCost = 0.0;
+    numberHelisWithExps = 0;
+    // Assign each expedition to one helicopter
+    helicopters = new ArrayList<ArrayList<ArrayList<Grupo>>>(nh*nc);
+    while (helicopters.size() < nh*nc) {
+      helicopters.add(new ArrayList<ArrayList<Grupo>>());
+    }
+    
+    // Assign the centers of each helicopter helicoptersCenters
+    helicoptersCenter = new Centro[nh*nc];
+    int ind = 0;
+    for (Centro c : centers) {
+      for (int i = 0; i < c.getNHelicopteros(); ++i) {
+        helicoptersCenter[ind] = c;
+        ++ind;
+      }
+    }
+    
+    for(Grupo g : groups) {
+      double nearest = getDistBetweenCenterGroup(centers.get(0), g);
+      Centro cn = centers.get(0);
+      for(int i=1; i<centers.size(); ++i) {
+        double d = getDistBetweenCenterGroup(centers.get(i), g);
+        if(d<nearest) {
+          nearest = d;
+          cn = centers.get(i);
+        }
+      }
+      ArrayList<Integer> hels = new ArrayList<Integer>();
+      for(int i=0; i<helicoptersCenter.length; ++i) {
+        if(helicoptersCenter[i]==cn)
+          hels.add(i);
+      }
+      Random random = new Random();
+      int helicopterForG = hels.get(Math.abs(random.nextInt()) % hels.size());
+      int cap = g.getNPersonas();
+      Centro c = getCenter(helicopterForG);
+      boolean ok = false;
+      if(helicopters.get(helicopterForG).size()==0) ++numberHelisWithExps;
+      for(int i=0; i<helicopters.get(helicopterForG).size() && !ok; ++i) {
+        int sum = 0;
+        if(helicopters.get(helicopterForG).get(i).size()==3) continue;
+        boolean isHighExp = expIsHighPriority( helicopters.get(helicopterForG).get(i) );
+        for(int j=0; j<helicopters.get(helicopterForG).get(i).size(); ++j)
+          sum += helicopters.get(helicopterForG).get(i).get(j).getNPersonas();
+        if(sum+cap <= 15) {
+          ok = true;
+          double oldCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+          typeASolutionCost -= oldCost;
+          if(isHighExp) {
+            typeBCostHelicopters[helicopterForG] -= oldCost;
+          }
+          helicopters.get(helicopterForG).get(i).add(g);
+          double newCost = getTripCost(c, helicopters.get(helicopterForG).get(i));
+          typeASolutionCost += newCost;
+          
+          if(isHighExp || g.getPrioridad()==1) {
+            typeBCostHelicopters[helicopterForG] += newCost;
+            typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+          } 
+        }
+      }
+        
+      if(!ok) {
+        ArrayList< Grupo > n = new ArrayList< Grupo >();
+        n.add(g);
+        double cost = getTripCost(c, n);
+        typeASolutionCost += cost;
+        helicopters.get(helicopterForG).add(n);
+        if(expIsHighPriority(n)) {
+          typeBCostHelicopters[helicopterForG] += cost;
+          typeBSolutionCost = Math.max(typeBCostHelicopters[helicopterForG], typeBSolutionCost);
+        }
+      }
+    }
+  }
   
   /*!\brief Generates an instance of Desastres problem with an initial solution.
    * 
@@ -209,6 +303,7 @@ public class DesastresState {
     groups = new Grupos(ng, seed);
     if(solution==1) initialSolutionByOrder(nc, nh, ng);
     else if(solution==2) initialSolutionRandom(nc, nh, ng);
+    else if(solution==3) initialSolutionNearestCenter(nc, nh, ng);
   }
 
   /*!\brief Copy constructor
@@ -676,7 +771,7 @@ public class DesastresState {
    */
   public String toString() {
     return "";
-  /*
+    /*
     String retVal = "\n";
     for (int i = 0; i < helicopters.size(); ++i){
       ArrayList<ArrayList<Grupo>> heli = helicopters.get(i);
@@ -685,7 +780,7 @@ public class DesastresState {
         for (int j = 0; j < heli.size(); ++j){
           ArrayList<Grupo> exp = heli.get(j);
           if (exp.size() > 0){
-            retVal += "\tExpedición " + j + " del helicoptero recoje a los grupos:\n";
+            retVal += "\tExpedición " + j + " del helicoptero " + i + " recoje a los grupos:\n";
             for (int k =0; k < exp.size(); ++k){
               retVal += "\t\tGrupo en: " + exp.get(k).getCoordX() + " " + exp.get(k).getCoordY() + "\n";
             }
