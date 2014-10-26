@@ -45,7 +45,6 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
     switch (options[rand.nextInt(numOptions)]) {
       case 0:
         //swapGroupsBetweenExpeditions
-        System.out.println("Inside swapGroupsBetweenExpeditions");
         // source helicopter
         do {
           do {
@@ -71,8 +70,6 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
         break;
       case 1:
         // swapGroupsFromSameExp
-        System.out.println("Inside swapGroupsFromSameExp");
-
         do {
           srcH = rand.nextInt(state.getTotalHelicopters());
         } while (!state.heliHasExpeditionWithThreeGroups(srcH));
