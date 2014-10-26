@@ -472,6 +472,7 @@ public class DesastresState {
    * expedition or not
    */
   public boolean doesGroupFitInExp (int dstH, int dstE, int srcH, int srcE , int g) {
+    if (helicopters.get(dstH).get(dstE).size() == 3) return false;
     int sum = 0;
     for (int i =0; i < helicopters.get(dstH).get(dstE).size(); ++i){
       sum += helicopters.get(dstH).get(dstE).get(i).getNPersonas();
