@@ -532,6 +532,32 @@ public class DesastresState {
     return false;
   }
 
+  /*!\brief Returns true there are more than one expeiditon
+   *
+   * @return boolean that indicates if the condition is true 
+   */
+  public boolean existsMoreThanOneExpedition () {
+    int count = 0;
+    for (int h = 0; h < helicopters.size(); ++h) {
+      count += helicopters.get(h).size();
+      if (count > 1) return true;
+    }
+    return (count > 1);
+  }
+
+  /*!\brief Returns true there is at least one expedition with more than one group
+   *
+   * @return boolean that indicates if the condition is true 
+   */
+  public boolean existsExpeditionWithGroups () {
+    for (int h = 0; h < helicopters.size(); ++h) {
+      for (int e = 0; e < helicopters.get(h).size(); ++e) {
+        if (helicopters.get(h).get(e).size() > 1) return true;
+      }
+    }
+    return false;
+  }
+
   /*!\brief Returns the time (in minutes) that would take to rescue all groups in an expedition
    *  if they are rescued in the given order and from a given center.
    *

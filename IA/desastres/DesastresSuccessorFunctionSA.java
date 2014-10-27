@@ -28,30 +28,33 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
     // number of operators
     Random rand = new Random();
 
-    // TODO check if maximum tries have been executed
-    int numOptions = 4;
-    int[] options = {0, 1, 2, 3};
+    ArrayList<Integer> options = new ArrayList<Integer>();
+    int numOptions = 0;
     // check 
-    if (!state.existsExpeditionWithThreeGroups()) {
-      numOptions = 3;
-      options = new int[] {0, 2, 3};
+    // SwapGroupsBetweenExpeditions
+    // MoveGroupBetweenExpeditions
+    if (state.existsMoreThanOneExpedition()) {
+      numOptions += 2;
+      options.add(0);
+      options.add(2);
     }
-
-    if (state.getNumHelisWithExps() == 1){
-      numOptions = 2;
-      options = new int[] {1,3};
+    // SwapGroupsFromSameExpedition
+    if (state.existsExpeditionWithThreeGroups()) {
+      ++numOptions;
+      options.add(1);
     }
-
-    if (state.getNCenters()*state.getNHelicoptersPerCenter() == 1){
-      numOptions = 1;
-      options = new int[] {1};
+    // MoveGroupToNonExistentExpedition
+    if (state.getNCenters()*state.getNHelicoptersPerCenter() > 1 &&
+        state.existsExpeditionWithGroups()) {
+      ++numOptions;
+      options.add(3);
     }
     
     int srcH, srcE, srcG, dstH, dstE, dstG;
     srcH = srcE = srcG = dstH = dstE = dstG = -1;
     String S = "";
     DesastresState newState = new DesastresState((DesastresState)aState);
-    switch (options[rand.nextInt(numOptions)]) {
+    switch (options.get(rand.nextInt(numOptions))) {
       case 0:
         //swapGroupsBetweenExpeditions
         // source helicopter
