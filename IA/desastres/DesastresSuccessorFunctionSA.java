@@ -23,6 +23,8 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
     DesastresState state = (DesastresState) aState;
     DesastresHeuristicFunction dhf = new DesastresHeuristicFunction();
 
+    final int numTries = 100;
+
     // Current cost:
     double v = dhf.getHeuristicValue(state);
     // number of operators
@@ -54,102 +56,113 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
     srcH = srcE = srcG = dstH = dstE = dstG = -1;
     String S = "";
     DesastresState newState = new DesastresState((DesastresState)aState);
-    switch (options.get(rand.nextInt(numOptions))) {
-      case 0:
-        //swapGroupsBetweenExpeditions
-        // source helicopter
-        do {
+    int currentTries = 0;
+
+
+    do {
+      switch (options.get(rand.nextInt(numOptions))) {
+        case 0:
+          //swapGroupsBetweenExpeditions
+          // source helicopter
+          do {
+            do {
+              srcH = rand.nextInt(state.getTotalHelicopters());
+            } while (state.getNumExpeditionsHeli(srcH) == 0);
+
+            srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
+            srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
+            do {
+              dstH = rand.nextInt(state.getTotalHelicopters());
+            } while (state.getNumExpeditionsHeli(dstH) == 0);
+
+            dstE = rand.nextInt(state.getNumExpeditionsHeli(dstH));
+            dstG = rand.nextInt(state.getExpeditions(dstH).get(dstE).size());
+            currentTries++;
+          } while (currentTries < numTries && 
+                   !state.isGroupsSwapValid(srcH, srcE, srcG, dstH, dstE, dstG));
+
+          newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
+          v = dhf.getHeuristicValue(newState);
+          S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
+            + srcE + " del helicoptero " + srcH + " con el grupo " + dstG + " de la expedición " 
+            + dstE + " del helicoptero " + dstH + " Coste(" + v + ") ---> "+ newState.toString());
+          retVal.add(new Successor(S, newState));
+          break;
+        case 1:
+          // swapGroupsFromSameExp
+          do {
+            srcH = rand.nextInt(state.getTotalHelicopters());
+          } while (!state.heliHasExpeditionWithThreeGroups(srcH));
+
+          do {
+            srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
+          } while (state.getExpeditions(srcH).get(srcE).size() != 3);
+
+          // only usefull swaps are 0 with 1, and 1 with 2. Choose one randomly.
+          srcG = 0;
+          dstG = 1;
+          if (rand.nextBoolean()) {
+            srcG = 2;
+          }
+
+          newState.swapGroupsFromSameExp(srcH, srcE, srcG, dstG);
+          v = dhf.getHeuristicValue(newState);
+          S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
+                    + srcE + " del helicoptero " + srcH + " cont grupo " + dstG 
+                    + " Coste(" + v + ") ---> " + newState.toString());
+          retVal.add(new Successor(S, newState));
+          break;
+        case 2:
+          // moveGroupBetweenExpeditions
+          do {
+            do {
+              srcH = rand.nextInt(state.getTotalHelicopters());
+            } while (state.getNumExpeditionsHeli(srcH) == 0);
+
+            srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
+            srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
+            
+            do {
+              dstH = rand.nextInt(state.getTotalHelicopters());
+            } while (state.getNumExpeditionsHeli(dstH) == 0);
+
+            dstE = rand.nextInt(state.getNumExpeditionsHeli(dstH));
+            currentTries++;
+          } while (currentTries < numTries && 
+                   (srcH != dstH || srcE != dstE) && state.doesGroupFitInExp(dstH, dstE, srcH, srcE, srcG));
+
+
+          newState.moveGroupBetweenExpeditions(srcH, srcE, srcG, dstH, dstE);
+          v = dhf.getHeuristicValue(newState);
+          S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + srcG + " de la expedición " 
+            + srcE + " del helicoptero " + srcH + " a la expedición " + dstE + " del helicoptero " 
+            + dstH + " Coste(" + v + ") ---> "+ newState.toString());
+          retVal.add(new Successor(S, newState));
+          break;
+        case 3:
+          // moveGroupToNonExistentExpedition
           do {
             srcH = rand.nextInt(state.getTotalHelicopters());
           } while (state.getNumExpeditionsHeli(srcH) == 0);
 
           srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
           srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
+
           do {
-            dstH = rand.nextInt(state.getTotalHelicopters());
-          } while (state.getNumExpeditionsHeli(dstH) == 0);
+            dstH = rand.nextInt(state.getTotalHelicopters());  // any helicopter here will fit
+          } while (state.getExpeditions(srcH).get(srcE).size() == 1 && dstH == srcH);
 
-          dstE = rand.nextInt(state.getNumExpeditionsHeli(dstH));
-          dstG = rand.nextInt(state.getExpeditions(dstH).get(dstE).size());
-        } while (!state.isGroupsSwapValid(srcH, srcE, srcG, dstH, dstE, dstG));
+          newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
+          v = dhf.getHeuristicValue(newState);
+          S = new String(DesastresState.CREAR_EXPEDICION + srcG + " de la expedición " 
+                    + srcE + " del helicoptero " + srcH + " a una nueva expedición del helicoptero " 
+                    + dstH + " Coste(" + v + ") ---> " + newState.toString());
+          retVal.add(new Successor(S, newState));
+          break;
+      }
+    } while (retVal.size() == 0 && currentTries < numTries);
 
-        newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
-        v = dhf.getHeuristicValue(newState);
-        S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
-          + srcE + " del helicoptero " + srcH + " con el grupo " + dstG + " de la expedición " 
-          + dstE + " del helicoptero " + dstH + " Coste(" + v + ") ---> "+ newState.toString());
-        retVal.add(new Successor(S, newState));
-        break;
-      case 1:
-        // swapGroupsFromSameExp
-        do {
-          srcH = rand.nextInt(state.getTotalHelicopters());
-        } while (!state.heliHasExpeditionWithThreeGroups(srcH));
-
-        do {
-          srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
-        } while (state.getExpeditions(srcH).get(srcE).size() != 3);
-
-        // only usefull swaps are 0 with 1, and 1 with 2. Choose one randomly.
-        srcG = 0;
-        dstG = 1;
-        if (rand.nextBoolean()) {
-          srcG = 2;
-        }
-
-        newState.swapGroupsFromSameExp(srcH, srcE, srcG, dstG);
-        v = dhf.getHeuristicValue(newState);
-        S = new String(DesastresState.INTERCAMBIO_GRUPOS + srcG + " de la expedición " 
-                  + srcE + " del helicoptero " + srcH + " cont grupo " + dstG 
-                  + " Coste(" + v + ") ---> " + newState.toString());
-        retVal.add(new Successor(S, newState));
-        break;
-      case 2:
-        // moveGroupBetweenExpeditions
-        do {
-          do {
-            srcH = rand.nextInt(state.getTotalHelicopters());
-          } while (state.getNumExpeditionsHeli(srcH) == 0);
-
-          srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
-          srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
-          
-          do {
-            dstH = rand.nextInt(state.getTotalHelicopters());
-          } while (state.getNumExpeditionsHeli(dstH) == 0);
-
-          dstE = rand.nextInt(state.getNumExpeditionsHeli(dstH));
-        } while ((srcH != dstH || srcE != dstE) && state.doesGroupFitInExp(dstH, dstE, srcH, srcE, srcG));
-
-
-        newState.moveGroupBetweenExpeditions(srcH, srcE, srcG, dstH, dstE);
-        v = dhf.getHeuristicValue(newState);
-        S = new String(DesastresState.MOVER_GRUPO_EXPEDICION + srcG + " de la expedición " 
-          + srcE + " del helicoptero " + srcH + " a la expedición " + dstE + " del helicoptero " 
-          + dstH + " Coste(" + v + ") ---> "+ newState.toString());
-        retVal.add(new Successor(S, newState));
-        break;
-      case 3:
-        // moveGroupToNonExistentExpedition
-        do {
-          srcH = rand.nextInt(state.getTotalHelicopters());
-        } while (state.getNumExpeditionsHeli(srcH) == 0);
-
-        srcE = rand.nextInt(state.getNumExpeditionsHeli(srcH));
-        srcG = rand.nextInt(state.getExpeditions(srcH).get(srcE).size());
-
-        do {
-          dstH = rand.nextInt(state.getTotalHelicopters());  // any helicopter here will fit
-        } while (state.getExpeditions(srcH).get(srcE).size() == 1 && dstH == srcH);
-
-        newState.moveGroupToNonExistentExpedition(srcH, srcE, srcG, dstH);
-        v = dhf.getHeuristicValue(newState);
-        S = new String(DesastresState.CREAR_EXPEDICION + srcG + " de la expedición " 
-                  + srcE + " del helicoptero " + srcH + " a una nueva expedición del helicoptero " 
-                  + dstH + " Coste(" + v + ") ---> " + newState.toString());
-        retVal.add(new Successor(S, newState));
-        break;
-    }
+    if (retVal.size() == 0) retVal.add(new Successor("", newState));
     //System.out.println(S);
     return retVal;
   }
