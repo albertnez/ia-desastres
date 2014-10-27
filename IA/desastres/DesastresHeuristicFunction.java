@@ -23,7 +23,7 @@ public class DesastresHeuristicFunction implements HeuristicFunction {
   */
   public double getHeuristicValue(Object state) {
     DesastresState st = (DesastresState)state;
-    return (st.getTypeASolutionCost()*heuristicWeight);
+    return (st.getTypeASolutionCost()*heuristicWeight) + (st.getTypeBSolutionCost()*(1.0-heuristicWeight));
   }
 
 }
