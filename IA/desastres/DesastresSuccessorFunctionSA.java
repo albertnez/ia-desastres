@@ -137,7 +137,7 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
         retVal.add(new Successor(S, newState));
         break;
     }
-    System.out.println(S);
+    //System.out.println(S);
     return retVal;
   }
 }

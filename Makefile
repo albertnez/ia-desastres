@@ -21,7 +21,7 @@ default: classes
 classes: $(CLASSES:.java=.class) 
 
 run: jar
-		java -jar ia_desastres.jar 5 1 100 1234 1.0 3
+		java -jar ia_desastres.jar 5 1 100 1234 0.5 3
 
 jar: classes
 		jar cvfm ia_desastres.jar Manifest.txt $(SRCPATH)/*.class
