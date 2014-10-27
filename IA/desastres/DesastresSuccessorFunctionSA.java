@@ -36,6 +36,16 @@ public class DesastresSuccessorFunctionSA implements SuccessorFunction {
       numOptions = 3;
       options = new int[] {0, 2, 3};
     }
+
+    if (state.getNumHelisWithExps() == 1){
+      numOptions = 2;
+      options = new int[] {1,3};
+    }
+
+    if (state.getNCenters()*state.getNHelicoptersPerCenter() == 1){
+      numOptions = 1;
+      options = new int[] {1};
+    }
     
     int srcH, srcE, srcG, dstH, dstE, dstG;
     srcH = srcE = srcG = dstH = dstE = dstG = -1;

@@ -20,7 +20,7 @@ public class DesastresMain {
     DesastresHeuristicFunction.setHeuristicWeight(Double.parseDouble(args[4]));
     System.out.println("\nProblema con " + Integer.parseInt(args[0]) + " centros, " 
                       + Integer.parseInt(args[1]) + " helicóptero/s por centro y " 
-                      + Integer.parseInt(args[2]) + " grupos. La semilla es " + Integer.parseInt(args[3]));
+                      + Integer.parseInt(args[2]) + " grupos. La semilla es " + Integer.parseInt(args[3])+ ".");
     DesastresHillClimbingSearch(d);
     DesastresSimulatedAnnealingSearch(d);
   }
