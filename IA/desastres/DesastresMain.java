@@ -18,36 +18,48 @@ public class DesastresMain {
                                           Integer.parseInt(args[3]),
                                           Integer.parseInt(args[5]));
     DesastresHeuristicFunction.setHeuristicWeight(Double.parseDouble(args[4]));
-    TSPHillClimbingSearch(d);
-    //TSPSimulatedAnnealingSearch(d);
+    System.out.println("\nProblema con " + Integer.parseInt(args[0]) + " centros, " 
+                      + Integer.parseInt(args[1]) + " helicóptero/s por centro y " 
+                      + Integer.parseInt(args[2]) + " grupos. La semilla es " + Integer.parseInt(args[3])+ ".");
+    DesastresHillClimbingSearch(d);
+    DesastresSimulatedAnnealingSearch(d);
   }
       
-  private static void TSPHillClimbingSearch(DesastresState d) {
-    System.out.println("\nTSP HillClimbing  -->");
+  private static void DesastresHillClimbingSearch(DesastresState d) {
+    System.out.println("\nDesastres HillClimbing  -->");
     try {
       Problem problem =  new Problem(d,new DesastresSuccessorFunction(), new DesastresGoalTest(),new DesastresHeuristicFunction());
       Search search =  new HillClimbingSearch();
       SearchAgent agent = new SearchAgent(problem,search);
       
       System.out.println();
-      printActions(agent.getActions());
+      printActions(agent.getActions(),1);
       printInstrumentation(agent.getInstrumentation());
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  private static void TSPSimulatedAnnealingSearch(DesastresState d) {
-    System.out.println("\nTSP Simulated Annealing  -->");
+  private static void DesastresSimulatedAnnealingSearch(DesastresState d) {
+    System.out.println("\nDesastres Simulated Annealing  -->");
     try {
       Problem problem =  new Problem(d,new DesastresSuccessorFunctionSA(), new DesastresGoalTest(),new DesastresHeuristicFunction());
-      SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(2000,100,5,0.001);
+      // Parameters are: [maxNumIterations, numIterationsInEachTemperatureStep, k, lambda]
+      // K is how long does it take for temperature to start decreasing
+      // lambda is how fast the function decreases
+      final int numIterations = 10000;
+      final int iterationsPerStep = 20;
+      final int K = 5;
+      final double lambda = 0.00001;
+      SimulatedAnnealingSearch search =  new SimulatedAnnealingSearch(numIterations, iterationsPerStep, K, lambda);
       //search.traceOn();
       SearchAgent agent = new SearchAgent(problem,search);
       
       System.out.println();
-      printActions(agent.getActions());
+      // AIMA IS BROKEN
+      printActions(agent.getActions(),2);
       printInstrumentation(agent.getInstrumentation());
+      System.out.println();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -63,10 +75,21 @@ public class DesastresMain {
     
   }
 
-  private static void printActions(List actions) {
+  private static void printActions(List actions, int opt) {
     for (int i = 0; i < actions.size(); i++) {
-      String action = (String) actions.get(i);
-      System.out.println(action);
+      if (actions.size()-1 == i){
+        if (opt == 1){
+          System.out.println("Última operación i coste heurístico del último estado:\n");
+          String action = (String) actions.get(i);
+          System.out.println(action);
+        }
+        else {
+          System.out.println("Coste heurístico del último estado:");
+          DesastresState st = (DesastresState) actions.get(i);
+          double heur = st.getTypeASolutionCost()*0.5 + st.getTypeBSolutionCost()*0.5;
+          System.out.println(heur);
+        }
+      }
     }
   }
 

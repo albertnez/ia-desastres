@@ -31,19 +31,20 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           double v = dhf.getHeuristicValue(newState);
           String S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + srcE + " del helicoptero " + srcH + " con grupo " + groupB 
                     + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
 
           //Now the other swap
           // Undo swap...
-          newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
+          newState = new DesastresState((DesastresState)aState);
+          //newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           // New swap
           groupA = 2;
           newState.swapGroupsFromSameExp(srcH, srcE, groupA, groupB);
           v = dhf.getHeuristicValue(newState);
           S = new String(DesastresState.INTERCAMBIO_GRUPOS + groupA + " de la expedición " 
-                    + srcE + " del helicoptero " + srcH + " cont grupo " + groupB 
+                    + srcE + " del helicoptero " + srcH + " con grupo " + groupB 
                     + " Coste(" + v + ") ---> " + newState.toString());
           retVal.add(new Successor(S, newState));
         }
@@ -67,7 +68,7 @@ public class DesastresSuccessorFunction implements SuccessorFunction {
                   // SWAP, only possible if the expedition has room for the group
                   DesastresState newState = new DesastresState((DesastresState)aState);
 
-                  if (state.doesGroupFitInExp(dstH,dstE,srcH,srcE,srcG) && state.doesGroupFitInExp(srcH,srcE,dstH,dstE,dstG)){
+                  if (state.isGroupsSwapValid(srcH, srcE, srcG, dstH, dstE, dstG)) {
                     newState.swapGroupsBetweenExpeditions(srcH, srcE, srcG, dstH, dstE, dstG);
                     // aima stuff
                     double v = dhf.getHeuristicValue(newState);              
